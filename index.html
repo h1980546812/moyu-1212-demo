@@ -1,0 +1,1314 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>魔芋双十二 · 携你触未来 ｜ 12.7 – 12.12</title>
+<style>
+
+/* ============================================================
+   魔芋 AI · 双十二 高保真原型  v0.4（蓝黑版 · 亮度 +20%）
+   纯静态单文件，两段背景视频已内嵌。
+   ============================================================ */
+:root{
+  --ink:#0A1230;        /* 页底（原 #050A1A 提亮） */
+  --navy:#132757;       /* 面板 */
+  --navy-2:#1B356F;     /* 面板高亮 */
+  --blue:#2E6BFF;       /* 主色 */
+  --blue-deep:#1A45C8;
+  --cyan:#6FEFFF;       /* 强调 / 发光 */
+  --frost:#EEF4FF;      /* 正文 */
+  --frost-2:#B3C3E6;    /* 次文 */
+  --frost-3:#7D92C2;    /* 弱文 */
+  --line:rgba(111,239,255,.26);
+  --line-strong:rgba(111,239,255,.6);
+  --ember:#FFBE5C;      /* 价格专用暖色 */
+  --ok:#3FE0A5;
+  --wrap:1200px;
+  --gutter:28px;
+  --font-cn:"PingFang SC","HarmonyOS Sans SC","Noto Sans SC","Source Han Sans SC","Microsoft YaHei",system-ui,sans-serif;
+  --font-num:"DIN Alternate","Bahnschrift","Avenir Next Condensed","Helvetica Neue",Arial,sans-serif;
+  --r:6px;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html{color-scheme:dark;scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{animation:none!important;transition:none!important}}
+body{margin:0;background:var(--ink);color:var(--frost);font-family:var(--font-cn);font-size:15px;line-height:1.62;overflow-x:hidden}
+a{color:inherit;text-decoration:none}
+button{font:inherit;color:inherit;cursor:pointer}
+input,select{font:inherit}
+img,video{display:block;max-width:100%}
+h1,h2,h3,h4{margin:0;font-weight:700;letter-spacing:-.01em;line-height:1.2}
+p{margin:0}
+.num{font-family:var(--font-num);font-variant-numeric:tabular-nums;letter-spacing:0}
+:focus-visible{outline:2px solid var(--cyan);outline-offset:2px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+
+/* ---------- 顶栏 ---------- */
+.top{position:fixed;inset:0 0 auto 0;z-index:50;height:60px;display:flex;align-items:center;gap:28px;padding:0 var(--gutter);
+  background:linear-gradient(180deg,rgba(10,18,48,.92),rgba(10,18,48,.74));backdrop-filter:blur(14px);border-bottom:1px solid rgba(111,239,255,.14)}
+.top .logo{display:flex;align-items:center;gap:10px;font-weight:700;font-size:16px}
+.top .logo i{width:26px;height:26px;border-radius:7px;background:linear-gradient(135deg,var(--cyan),var(--blue));display:inline-block;position:relative}
+.top .logo i::after{content:"";position:absolute;inset:7px;border-radius:3px;background:var(--ink)}
+.top nav{display:flex;gap:4px;margin-left:8px}
+.top nav a{padding:8px 10px;border-radius:var(--r);color:var(--frost-2);font-size:14px}
+.top nav a:hover,.top nav a.on{color:var(--frost);background:rgba(46,107,255,.22)}
+.top .cd{margin-left:auto;display:flex;align-items:center;gap:10px;font-size:13px;color:var(--frost-2)}
+.top .cd b{font-family:var(--font-num);font-size:20px;color:var(--frost);font-weight:600;letter-spacing:.02em}
+.top .cd b small{font-size:11px;color:var(--frost-3);margin:0 6px 0 2px;font-family:var(--font-cn)}
+.top .me{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--frost-2);padding-left:18px;border-left:1px solid rgba(255,255,255,.14)}
+.top .me em{font-style:normal;color:var(--cyan)}
+.top nav a,.top .logo,.top .cd,.top .me{white-space:nowrap}
+@media (max-width:1180px){.top .me{display:none}}
+@media (max-width:960px){.top nav{display:none}.top .cd b{font-size:16px}}
+@media (max-width:560px){.top{height:52px;gap:12px}.top .cd{font-size:12px}.top .cd b{font-size:14px}#p1 .ghost{font-size:120px;top:10vh;right:-4vw}#p1 .hero{grid-template-columns:1fr;padding-top:90px}#p1 .stats{gap:22px;flex-wrap:wrap}}
+
+/* ---------- 右侧竖排导航 ---------- */
+.rail{position:fixed;right:18px;top:50%;transform:translateY(-50%);z-index:40;display:flex;flex-direction:column;gap:8px}
+.rail a{writing-mode:vertical-rl;font-size:12px;letter-spacing:.3em;color:var(--frost-3);padding:10px 6px;border-right:2px solid transparent;transition:color .2s,border-color .2s}
+.rail a.on{color:var(--cyan);border-color:var(--cyan)}
+@media (max-width:1100px){.rail{display:none}}
+
+/* ---------- 通用版面 ---------- */
+.wrap{width:min(var(--wrap),100% - var(--gutter)*2);margin:0 auto}
+section.block{position:relative;padding:112px 0 96px;isolation:isolate}
+section.block + section.block{border-top:1px solid rgba(111,239,255,.1)}
+.bg{position:absolute;inset:0;z-index:-2;overflow:hidden;background:var(--ink)}
+.bg video,#p1 .hero-bg video{image-rendering:auto;transform:translateZ(0)}
+.bg video{width:100%;height:100%;object-fit:cover}
+.bg::after{content:"";position:absolute;inset:0;
+  background:
+    linear-gradient(180deg,rgba(10,18,48,.66) 0%,rgba(10,18,48,.5) 40%,rgba(10,18,48,.74) 100%),
+    repeating-linear-gradient(90deg,rgba(111,239,255,.045) 0 1px,transparent 1px 80px),
+    repeating-linear-gradient(0deg,rgba(111,239,255,.045) 0 1px,transparent 1px 80px)}
+.head{display:grid;grid-template-columns:1fr 360px;gap:40px;align-items:end;margin-bottom:44px}
+.head h2{font-size:clamp(28px,3.4vw,42px)}
+.head h2 span{display:block;font-size:14px;font-weight:500;color:var(--cyan);letter-spacing:.14em;margin-bottom:12px}
+.head p{color:var(--frost-2);font-size:15px;max-width:40em}
+.head .aside{color:var(--frost-2);font-size:13px;line-height:1.7;border-left:1px solid var(--line-strong);padding-left:16px}
+.head .aside b{color:var(--frost);display:block;font-weight:600}
+@media (max-width:860px){.head{grid-template-columns:1fr;gap:18px}}
+
+/* HUD 面板：四角短刻 + 细描边 */
+.hud{position:relative;background:linear-gradient(160deg,rgba(27,53,111,.84),rgba(19,39,87,.72));border:1px solid var(--line);border-radius:var(--r)}
+.hud::before,.hud::after{content:"";position:absolute;width:14px;height:14px;border:2px solid var(--cyan);pointer-events:none}
+.hud::before{top:-1px;left:-1px;border-right:0;border-bottom:0;border-top-left-radius:var(--r)}
+.hud::after{bottom:-1px;right:-1px;border-left:0;border-top:0;border-bottom-right-radius:var(--r)}
+.hud.lift{box-shadow:0 20px 60px rgba(0,0,0,.3),0 0 0 1px rgba(111,239,255,.06) inset}
+
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:42px;padding:0 20px;border-radius:var(--r);border:1px solid transparent;font-weight:600;font-size:14px;transition:transform .12s,background .2s,border-color .2s}
+.btn:active{transform:translateY(1px)}
+.btn-p{background:linear-gradient(90deg,var(--blue),#4A86FF);color:#fff;box-shadow:0 8px 24px rgba(46,107,255,.38)}
+.btn-p:hover{background:linear-gradient(90deg,#3B76FF,#5B93FF)}
+.btn-c{background:var(--cyan);color:#04121F}
+.btn-c:hover{background:#93F4FF}
+.btn-g{background:rgba(111,239,255,.1);border-color:var(--line-strong);color:var(--frost)}
+.btn-g:hover{background:rgba(111,239,255,.18)}
+.btn-s{height:34px;padding:0 14px;font-size:13px}
+.btn[disabled]{opacity:.5;cursor:not-allowed}
+
+.tag{display:inline-flex;align-items:center;height:22px;padding:0 8px;border-radius:4px;font-size:12px;font-weight:500;background:rgba(111,239,255,.14);color:var(--cyan);border:1px solid rgba(111,239,255,.28)}
+.tag.warm{background:rgba(255,190,92,.14);color:var(--ember);border-color:rgba(255,190,92,.32)}
+.tag.ok{background:rgba(63,224,165,.14);color:var(--ok);border-color:rgba(63,224,165,.32)}
+.tag.mute{background:rgba(255,255,255,.08);color:var(--frost-2);border-color:rgba(255,255,255,.14)}
+.price{font-family:var(--font-num);color:var(--ember);font-weight:700;line-height:1}
+.price small{font-size:.55em;font-weight:600;margin-right:2px}
+.was{color:var(--frost-3);text-decoration:line-through;font-size:13px;margin-left:8px;font-family:var(--font-num)}
+.note{font-size:12px;color:var(--frost-3);line-height:1.6}
+.dev{display:inline-block;font-size:11px;color:#D2B8FF;border:1px dashed rgba(210,184,255,.55);padding:1px 6px;border-radius:3px;margin-left:6px;vertical-align:middle;font-weight:500}
+
+/* tabs */
+.tabs{display:flex;gap:6px;flex-wrap:wrap}
+.tabs button{height:36px;padding:0 16px;border-radius:var(--r);border:1px solid rgba(111,239,255,.2);background:rgba(10,18,48,.4);color:var(--frost-2);font-size:14px;transition:all .18s}
+.tabs button:hover{color:var(--frost);border-color:var(--line-strong)}
+.tabs button.on{background:var(--blue);border-color:var(--blue);color:#fff;box-shadow:0 6px 18px rgba(46,107,255,.38)}
+
+/* toast */
+.toast{position:fixed;left:50%;bottom:32px;transform:translate(-50%,20px);z-index:90;background:#163070;border:1px solid var(--line-strong);color:var(--frost);padding:12px 18px;border-radius:var(--r);font-size:14px;opacity:0;pointer-events:none;transition:all .25s;box-shadow:0 14px 40px rgba(0,0,0,.4);max-width:min(560px,90vw)}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+
+/* ============================================================ P1 主会场 */
+#p1{min-height:100vh;padding:0;display:flex;flex-direction:column}
+#p1 .hero-bg{position:absolute;inset:0;z-index:-2;background:#000;overflow:hidden}
+#p1 .hero-bg video{width:100%;height:100%;object-fit:cover;object-position:center 20%}
+#p1 .hero-bg::after{content:"";position:absolute;inset:0;
+  background:
+    radial-gradient(ellipse 60% 70% at 72% 45%,transparent 30%,rgba(10,18,48,.45) 70%,rgba(10,18,48,.88) 100%),
+    linear-gradient(90deg,rgba(10,18,48,.9) 0%,rgba(10,18,48,.66) 38%,rgba(10,18,48,.08) 70%),
+    linear-gradient(180deg,rgba(10,18,48,.35),transparent 20%,transparent 70%,var(--ink) 100%)}
+#p1 .hero{flex:1;display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,.9fr);align-items:center;padding-top:110px;min-height:78vh}
+#p1 .ghost{position:absolute;right:-1vw;top:14vh;font-family:var(--font-num);font-size:clamp(160px,26vw,380px);font-weight:700;line-height:.85;color:transparent;-webkit-text-stroke:1px rgba(111,239,255,.32);letter-spacing:-.04em;z-index:-1;user-select:none;pointer-events:none}
+#p1 .ghost b{color:transparent;-webkit-text-stroke:1px rgba(111,239,255,.32)}
+#p1 .kicker{display:inline-flex;align-items:center;gap:10px;font-size:13px;color:var(--cyan);letter-spacing:.2em;margin-bottom:22px}
+#p1 .kicker::before{content:"";width:28px;height:1px;background:var(--cyan)}
+#p1 h1{font-size:clamp(40px,5.6vw,76px);line-height:1.12;letter-spacing:-.01em}
+#p1 h1 .date{display:block;white-space:nowrap;font-family:var(--font-num);font-weight:600;font-size:.42em;color:var(--frost-2);letter-spacing:.06em;margin-top:18px}
+#p1 h1 .date b{color:var(--cyan);font-weight:600}
+#p1 .lede{margin-top:26px;font-size:17px;color:var(--frost-2);max-width:30em}
+#p1 .cta{display:flex;gap:12px;margin-top:34px;flex-wrap:wrap}
+#p1 .stats{display:flex;gap:38px;margin-top:46px;padding-top:22px;border-top:1px solid rgba(111,239,255,.2);max-width:560px}
+#p1 .stats div b{display:block;font-family:var(--font-num);font-size:30px;font-weight:600;line-height:1}
+#p1 .stats div b i{font-style:normal;font-size:14px;color:var(--frost-2);margin-left:3px;font-family:var(--font-cn);font-weight:500}
+#p1 .stats div span{display:block;font-size:12px;color:var(--frost-3);margin-top:6px}
+
+/* 官方合作带 */
+.partners{padding:26px 0 0}
+.partners .lbl{display:flex;align-items:center;gap:14px;font-size:13px;color:var(--frost-2);margin-bottom:14px}
+.partners .lbl::after{content:"";flex:1;height:1px;background:linear-gradient(90deg,var(--line-strong),transparent)}
+.marq{overflow:hidden;mask:linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent)}
+.marq ul{display:flex;gap:14px;list-style:none;margin:0;padding:0;width:max-content;animation:marq 38s linear infinite}
+.marq:hover ul{animation-play-state:paused}
+@keyframes marq{to{transform:translateX(-50%)}}
+.marq li{display:flex;align-items:center;gap:12px;height:58px;padding:0 18px 0 12px;border:1px solid rgba(111,239,255,.18);border-radius:var(--r);background:rgba(19,39,87,.6);white-space:nowrap}
+.marq li i{width:34px;height:34px;border-radius:8px;display:grid;place-items:center;font-family:var(--font-num);font-weight:700;font-size:15px;color:#fff;font-style:normal}
+.marq li b{display:block;font-size:14px;font-weight:600}
+.marq li small{display:block;font-size:11px;color:var(--frost-3)}
+
+/* 品牌素材 + 入口 */
+.p1-grid{display:grid;grid-template-columns:1.4fr 1fr;gap:22px;margin-top:40px;padding-bottom:70px;align-items:stretch}
+.p1-grid>div:first-child{display:flex;flex-direction:column}
+.p1-grid .collab{flex:1}
+@media (max-width:960px){.p1-grid{grid-template-columns:1fr}}
+.collab{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.collab a{position:relative;min-height:400px;height:100%;border-radius:var(--r);overflow:hidden;border:1px solid rgba(111,239,255,.2);padding:16px;display:flex;flex-direction:column;justify-content:flex-end;transition:transform .2s,border-color .2s}
+.collab a:hover{transform:translateY(-3px);border-color:var(--line-strong)}
+.collab a .art{position:absolute;inset:0;z-index:-1}
+.collab a .art::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,transparent 35%,rgba(10,18,48,.9))}
+.collab a .ph{position:absolute;top:12px;left:12px;font-size:11px;color:rgba(238,244,255,.75);border:1px dashed rgba(238,244,255,.45);padding:2px 6px;border-radius:3px}
+.collab a b{font-size:16px;line-height:1.25}
+.collab a small{font-size:12px;color:var(--frost-2);margin-top:4px}
+.entries{display:grid;grid-template-columns:1fr 1fr;grid-auto-rows:1fr;gap:12px;align-self:stretch;margin-top:35px}
+.entries a{padding:16px 16px;min-height:96px;display:flex;flex-direction:column;justify-content:space-between;transition:transform .2s,border-color .2s}
+.entries a:hover{transform:translateY(-3px);border-color:var(--line-strong)}
+.entries a b{font-size:16px;display:block}
+.entries a small{color:var(--frost-2);font-size:12px;display:block;margin-top:4px}
+.entries a .go{font-size:12px;color:var(--cyan);margin-top:8px}
+.entries a.wide{grid-column:1/-1;flex-direction:row;align-items:center;min-height:0;background:linear-gradient(90deg,rgba(46,107,255,.4),rgba(27,53,111,.66))}
+.entries a.wide .go{margin:0 0 0 auto}
+
+/* ============================================================ P2 秒杀 */
+.p2-grid{display:grid;grid-template-columns:1fr 1fr;gap:22px}
+@media (max-width:960px){.p2-grid{grid-template-columns:1fr}}
+.panel{padding:22px}
+.panel .ph{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:16px}
+.panel .ph h3{font-size:20px}
+.panel .ph p{font-size:13px;color:var(--frost-2);margin-top:4px}
+.rank-head{display:flex;align-items:center;justify-content:space-between;margin:14px 0 8px;font-size:12px;color:var(--frost-3)}
+.rank{list-style:none;margin:0;padding:0}
+.rank li{display:grid;grid-template-columns:34px 1fr 150px 88px;align-items:center;gap:12px;padding:10px 8px;border-top:1px solid rgba(111,239,255,.12);font-size:14px}
+.rank li:first-child{border-top:0}
+.rank li .no{font-family:var(--font-num);font-size:18px;font-weight:700;color:var(--frost-3)}
+.rank li:nth-child(-n+3) .no{color:var(--cyan)}
+.rank li .who b{font-weight:600}
+.rank li .who small{display:block;font-size:11px;color:var(--frost-3)}
+.rank li .bar{height:6px;background:rgba(255,255,255,.1);border-radius:3px;overflow:hidden;position:relative}
+.rank li .bar i{position:absolute;inset:0 auto 0 0;background:linear-gradient(90deg,var(--blue),var(--cyan));border-radius:3px}
+.rank li .amt{text-align:right;font-family:var(--font-num);font-weight:600}
+.rank li .amt small{font-size:11px;color:var(--frost-3);font-family:var(--font-cn);font-weight:400;margin-left:2px}
+.rank li.me{background:rgba(111,239,255,.09);border-radius:4px;outline:1px solid rgba(111,239,255,.32)}
+.rank-foot{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:14px;padding-top:14px;border-top:1px dashed rgba(111,239,255,.22)}
+.rank-foot .note{max-width:28em}
+
+.sk-timer{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--frost-2)}
+.sk-timer b{font-family:var(--font-num);font-size:22px;color:var(--frost);background:rgba(10,18,48,.6);padding:2px 8px;border-radius:4px;border:1px solid rgba(111,239,255,.28);min-width:44px;text-align:center}
+.sk-card{display:grid;grid-template-columns:120px 1fr;gap:18px;padding:18px;margin-top:14px;border:1px solid var(--line);border-radius:var(--r);background:rgba(10,18,48,.45)}
+.sk-card .art{aspect-ratio:1;border-radius:6px;position:relative;overflow:hidden}
+.sk-card .art i{position:absolute;inset:0;background:radial-gradient(circle at 30% 30%,rgba(255,255,255,.35),transparent 45%)}
+.sk-card .art b{position:absolute;left:10px;bottom:10px;font-family:var(--font-num);font-size:26px;font-weight:700;color:#fff;line-height:1}
+.sk-card h4{font-size:18px}
+.sk-card .spec{font-size:13px;color:var(--frost-2);margin-top:6px}
+.sk-card .row{display:flex;align-items:flex-end;gap:14px;margin-top:14px;flex-wrap:wrap}
+.sk-card .price{font-size:36px}
+.sk-card .stock{margin-left:auto;text-align:right;font-size:12px;color:var(--frost-3)}
+.sk-card .stock i{display:block;width:140px;height:4px;background:rgba(255,255,255,.12);border-radius:2px;margin-top:6px;overflow:hidden;position:relative}
+.sk-card .stock i::after{content:"";position:absolute;inset:0 auto 0 0;width:var(--w,40%);background:var(--ember);border-radius:2px}
+.sk-sessions{display:flex;gap:8px;margin-top:14px}
+.sk-sessions span{flex:1;text-align:center;padding:8px 4px;border-radius:4px;border:1px solid rgba(111,239,255,.18);font-size:12px;color:var(--frost-3)}
+.sk-sessions span b{display:block;font-family:var(--font-num);font-size:16px;color:var(--frost-2);font-weight:600}
+.sk-sessions span.live{border-color:var(--cyan);color:var(--cyan);background:rgba(111,239,255,.1)}
+.sk-sessions span.live b{color:var(--cyan)}
+.next-list ul{list-style:none;margin:0;padding:0}
+.next-list li{display:grid;grid-template-columns:auto 1fr auto auto auto;align-items:center;gap:12px;padding:10px 0;border-top:1px solid rgba(111,239,255,.12);font-size:14px}
+.next-list li b{font-weight:500}
+.next-list li .price{font-size:20px}
+.next-list li .was{margin-left:0}
+
+.cheap{margin-top:22px;padding:26px;display:grid;grid-template-columns:260px 1fr;gap:28px;align-items:center;background:linear-gradient(120deg,rgba(46,107,255,.36),rgba(19,39,87,.66) 55%)}
+@media (max-width:960px){.cheap{grid-template-columns:1fr}}
+.cheap .big{font-family:var(--font-num);font-size:96px;font-weight:700;color:var(--ember);line-height:.9;letter-spacing:-.04em}
+.cheap .big small{font-size:28px;margin-right:4px;vertical-align:top;position:relative;top:14px}
+.cheap h3{font-size:22px;margin-top:10px}
+.cheap .sub{font-size:13px;color:var(--frost-2);margin-top:6px}
+.cheap-list{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+@media (max-width:700px){.cheap-list{grid-template-columns:1fr}}
+.cheap-list>div{padding:16px;border:1px solid var(--line);border-radius:var(--r);background:rgba(10,18,48,.5);display:flex;flex-direction:column;gap:8px}
+.cheap-list>div b{font-size:15px}
+.cheap-list>div>span{font-size:12px;color:var(--frost-2);flex:1}
+.cheap-list>div .bottom{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.cheap-list>div .price{font-size:24px}
+.cheap-list>div.bought{opacity:.75}
+.cheap-list>div.bought .price{color:var(--frost)}
+
+/* ============================================================ P3 复购返点 */
+.p3-grid{display:grid;grid-template-columns:1.25fr .75fr;gap:22px}
+@media (max-width:960px){.p3-grid{grid-template-columns:1fr}}
+.gauge{padding:26px}
+.gauge .in{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.gauge .in label{font-size:14px;color:var(--frost-2)}
+.gauge .in .field{display:flex;align-items:center;gap:6px;background:rgba(10,18,48,.6);border:1px solid var(--line-strong);border-radius:var(--r);padding:0 12px;height:46px}
+.gauge .in .field span{color:var(--frost-2)}
+.gauge .in input{width:140px;background:none;border:0;color:var(--frost);font-family:var(--font-num);font-size:24px;font-weight:600;outline:none}
+.gauge .quick{display:flex;gap:6px}
+.gauge .quick button{height:30px;padding:0 10px;border-radius:4px;border:1px solid rgba(111,239,255,.2);background:none;color:var(--frost-2);font-size:12px;font-family:var(--font-num)}
+.gauge .quick button:hover{border-color:var(--cyan);color:var(--cyan)}
+.track{position:relative;margin:64px 0 10px;height:14px;background:rgba(255,255,255,.1);border-radius:7px}
+.track .fill{position:absolute;inset:0 auto 0 0;width:0;background:linear-gradient(90deg,var(--blue),var(--cyan));border-radius:7px;transition:width .5s cubic-bezier(.22,.61,.36,1)}
+.track .fill::after{content:"";position:absolute;right:-2px;top:50%;width:22px;height:22px;transform:translateY(-50%);border-radius:50%;background:#fff;box-shadow:0 0 0 5px rgba(111,239,255,.32),0 0 24px var(--cyan)}
+.track .tick{position:absolute;bottom:22px;transform:translateX(-50%);font-size:11px;color:var(--frost-3);text-align:center;white-space:nowrap;line-height:1.3}
+.track .tick::after{content:"";position:absolute;left:50%;top:100%;width:1px;height:14px;background:rgba(111,239,255,.38)}
+.track .tick b{display:block;font-family:var(--font-num);font-size:13px;color:var(--frost-2);font-weight:600}
+.track .tick.hit b{color:var(--cyan)}
+.gauge .out{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:34px}
+.gauge .out>div{padding:14px 16px;border:1px solid var(--line);border-radius:var(--r);background:rgba(10,18,48,.45)}
+.gauge .out>div span{font-size:12px;color:var(--frost-3);display:block}
+.gauge .out>div b{font-family:var(--font-num);font-size:28px;font-weight:700;display:block;margin-top:4px;line-height:1}
+.gauge .out>div b.ember{color:var(--ember)}
+.gauge .out>div small{font-size:12px;color:var(--frost-2);display:block;margin-top:6px}
+.vouchers{display:flex;gap:10px;margin-top:22px;flex-wrap:wrap}
+.vch{display:flex;align-items:stretch;border-radius:var(--r);overflow:hidden;border:1px solid rgba(255,190,92,.38);background:rgba(255,190,92,.07);min-width:200px}
+.vch .l{padding:10px 14px;background:rgba(255,190,92,.16);display:grid;place-items:center;border-right:1px dashed rgba(255,190,92,.5)}
+.vch .l b{font-family:var(--font-num);font-size:26px;color:var(--ember);font-weight:700;line-height:1}
+.vch .l b small{font-size:12px;margin-right:2px}
+.vch .r{padding:8px 12px;font-size:12px;color:var(--frost-2);line-height:1.5}
+.vch .r b{display:block;color:var(--frost);font-size:13px}
+.vch.locked{opacity:.45;filter:grayscale(.4)}
+.tiers{padding:22px}
+.tiers table{width:100%;border-collapse:collapse;font-size:14px;margin-top:10px}
+.tiers th{font-weight:500;font-size:12px;color:var(--frost-3);text-align:left;padding:6px 8px;border-bottom:1px solid var(--line)}
+.tiers td{padding:11px 8px;border-bottom:1px solid rgba(111,239,255,.1);font-family:var(--font-num)}
+.tiers td:first-child{font-family:var(--font-cn)}
+.tiers td.pct{color:var(--ember);font-weight:700;font-size:16px}
+.tiers tr.hit td{background:rgba(111,239,255,.09)}
+.sub-plans{margin-top:22px;padding:22px}
+.sub-plans .pl{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:14px}
+@media (max-width:760px){.sub-plans .pl{grid-template-columns:1fr}}
+.sub-plans .pl>div{padding:16px;border:1px solid var(--line);border-radius:var(--r);background:rgba(10,18,48,.45)}
+.sub-plans .pl>div>b{font-size:15px;display:block}
+.sub-plans .pl>div .price{font-size:28px;margin-top:10px}
+.sub-plans .pl>div .price small{font-size:12px;font-family:var(--font-cn);color:var(--frost-2);font-weight:400;margin-left:4px}
+.sub-plans .pl>div ul{margin:12px 0 0;padding:0;list-style:none;font-size:12px;color:var(--frost-2);line-height:1.8}
+.sub-plans .pl>div.pick{border-color:var(--line-strong);background:linear-gradient(160deg,rgba(46,107,255,.34),rgba(10,18,48,.55))}
+
+/* ============================================================ P4 人群 */
+.crowd-tabs{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:22px}
+.crowd-tabs button{display:flex;align-items:center;gap:10px;height:48px;padding:0 18px 0 12px;border-radius:var(--r);border:1px solid rgba(111,239,255,.2);background:rgba(10,18,48,.5);color:var(--frost-2);font-size:15px;transition:all .18s}
+.crowd-tabs button i{width:26px;height:26px;border-radius:6px;display:grid;place-items:center;font-size:13px;font-style:normal;background:rgba(111,239,255,.14);color:var(--cyan)}
+.crowd-tabs button.on{background:var(--blue);border-color:var(--blue);color:#fff;box-shadow:0 8px 24px rgba(46,107,255,.38)}
+.crowd-tabs button.on i{background:rgba(255,255,255,.2);color:#fff}
+.crowd{display:grid;grid-template-columns:300px 1fr;gap:22px}
+@media (max-width:960px){.crowd{grid-template-columns:1fr}}
+.crowd .intro{padding:24px}
+.crowd .intro h3{font-size:24px}
+.crowd .intro p{color:var(--frost-2);font-size:14px;margin-top:10px}
+.crowd .intro .need{margin-top:18px;font-size:13px;color:var(--frost-2);line-height:1.9}
+.crowd .intro .need b{color:var(--frost);font-weight:500}
+.packs{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;align-content:start}
+@media (max-width:760px){.packs{grid-template-columns:1fr}}
+.pack{padding:18px;display:flex;flex-direction:column;gap:10px;min-height:210px}
+.pack .top-row{display:flex;justify-content:space-between;align-items:center}
+.pack h4{font-size:17px}
+.pack .models{font-size:12px;color:var(--frost-2);line-height:1.7;flex:1}
+.pack .models em{font-style:normal;color:var(--frost);background:rgba(111,239,255,.12);padding:0 5px;border-radius:3px;margin-right:4px;display:inline-block}
+.pack .bottom{display:flex;align-items:flex-end;justify-content:space-between;gap:10px}
+.pack .price{font-size:28px}
+.pack.sk{border-color:rgba(255,190,92,.42)}
+.hot{margin-top:22px;padding:26px;display:grid;grid-template-columns:1fr 1.2fr;gap:28px;align-items:center;background:linear-gradient(100deg,rgba(19,39,87,.8),rgba(46,107,255,.28));overflow:hidden;position:relative}
+@media (max-width:960px){.hot{grid-template-columns:1fr}}
+.hot h3{font-size:26px;margin-top:10px}
+.hot p{color:var(--frost-2);font-size:14px;margin-top:10px;max-width:34em}
+.hot .steps{display:flex;gap:0;margin-top:18px;counter-reset:s}
+.hot .steps span{flex:1;position:relative;padding:10px 12px 10px 0;font-size:12px;color:var(--frost-2);counter-increment:s}
+.hot .steps span::before{content:counter(s);display:inline-grid;place-items:center;width:20px;height:20px;border-radius:50%;background:var(--cyan);color:#04121F;font-family:var(--font-num);font-weight:700;font-size:11px;margin-right:6px}
+.hot-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.hot-grid>div{padding:16px;border:1px solid var(--line);border-radius:var(--r);background:rgba(10,18,48,.55)}
+.hot-grid>div b{font-size:15px;display:block}
+.hot-grid>div>small,.hot-grid>div div>small{font-size:12px;color:var(--frost-2);display:block;margin-top:4px;line-height:1.6}
+.hot-grid>div .price{font-size:24px;margin-top:10px}
+
+/* ============================================================ P5 高校 */
+.p5-grid{display:grid;grid-template-columns:1fr 1fr;gap:22px}
+@media (max-width:960px){.p5-grid{grid-template-columns:1fr}}
+.form{padding:22px}
+.form h3{font-size:19px}
+.form .desc{font-size:13px;color:var(--frost-2);margin-top:4px}
+.form .seg{display:flex;gap:4px;padding:4px;background:rgba(10,18,48,.6);border-radius:var(--r);margin:16px 0;border:1px solid rgba(111,239,255,.18)}
+.form .seg button{flex:1;height:34px;border:0;border-radius:4px;background:none;color:var(--frost-2);font-size:13px}
+.form .seg button.on{background:var(--blue);color:#fff}
+.fields{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.fields .full{grid-column:1/-1}
+.fld label{display:block;font-size:12px;color:var(--frost-2);margin-bottom:6px}
+.fld input,.fld select{width:100%;height:42px;padding:0 12px;border-radius:var(--r);border:1px solid rgba(111,239,255,.24);background:rgba(10,18,48,.6);color:var(--frost);outline:none}
+.fld input:focus,.fld select:focus{border-color:var(--cyan);box-shadow:0 0 0 3px rgba(111,239,255,.16)}
+.fld input::placeholder{color:var(--frost-3)}
+.form .act{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:16px;flex-wrap:wrap}
+.flow{list-style:none;margin:18px 0 0;padding:0;display:grid;grid-template-columns:repeat(4,1fr);gap:8px;counter-reset:f}
+.flow li{position:relative;padding:12px 12px 12px 14px;border-left:2px solid var(--line-strong);font-size:12px;color:var(--frost-2);line-height:1.55;counter-increment:f}
+.flow li b{display:block;color:var(--frost);font-size:13px;margin-bottom:2px}
+.flow li b::before{content:counter(f,decimal-leading-zero);font-family:var(--font-num);color:var(--cyan);margin-right:6px;font-weight:700}
+.flow li.live{border-color:var(--cyan);background:rgba(111,239,255,.08)}
+.ticket{margin-top:16px;padding:14px 16px;border-radius:var(--r);border:1px solid rgba(63,224,165,.38);background:rgba(63,224,165,.08);display:none;font-size:13px;color:var(--frost-2)}
+.ticket.show{display:block}
+.ticket b{color:var(--ok);font-family:var(--font-num)}
+.side-cards{display:grid;gap:14px;align-content:start}
+.side-cards .hud{padding:20px}
+.side-cards h4{font-size:17px}
+.side-cards p{font-size:13px;color:var(--frost-2);margin-top:6px}
+.side-cards .kv{display:flex;gap:18px;margin-top:14px;flex-wrap:wrap}
+.side-cards .kv div b{font-family:var(--font-num);font-size:26px;font-weight:700;color:var(--ember);display:block;line-height:1}
+.side-cards .kv div span{font-size:12px;color:var(--frost-3)}
+.side-cards .bundle{display:flex;align-items:center;gap:10px;margin-top:14px;flex-wrap:wrap}
+.side-cards .bundle span{padding:6px 10px;border-radius:4px;border:1px solid var(--line);font-size:12px;background:rgba(10,18,48,.45)}
+.side-cards .bundle i{color:var(--cyan);font-style:normal;font-weight:700}
+
+/* ============================================================ P6 邀请 */
+.p6-grid{display:grid;grid-template-columns:1.1fr .9fr;gap:22px}
+@media (max-width:960px){.p6-grid{grid-template-columns:1fr}}
+.invite{padding:26px}
+.invite .code{display:flex;align-items:center;gap:12px;margin-top:16px;flex-wrap:wrap}
+.invite .code b{font-family:var(--font-num);font-size:34px;letter-spacing:.14em;color:var(--cyan);background:rgba(10,18,48,.6);border:1px dashed var(--line-strong);padding:6px 16px;border-radius:var(--r)}
+.ladder{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:22px}
+@media (max-width:700px){.ladder{grid-template-columns:1fr 1fr}}
+.ladder div{padding:14px;border:1px solid var(--line);border-radius:var(--r);background:rgba(10,18,48,.5);text-align:left}
+.ladder div span{font-size:12px;color:var(--frost-3);display:block}
+.ladder div b{font-family:var(--font-num);font-size:22px;font-weight:700;display:block;margin-top:4px;line-height:1.1}
+.ladder div small{font-size:12px;color:var(--frost-2);display:block;margin-top:6px}
+.ladder div.hit{border-color:var(--cyan)}
+.ladder div.hit span::after{content:" 已达成";color:var(--ok)}
+.gifts{display:flex;gap:14px;margin-top:18px;flex-wrap:wrap}
+.gifts div{flex:1;min-width:180px;padding:14px 16px;border-radius:var(--r);border:1px solid rgba(255,190,92,.32);background:rgba(255,190,92,.07)}
+.gifts div b{font-family:var(--font-num);font-size:24px;color:var(--ember);font-weight:700;display:block;line-height:1}
+.gifts div b i{font-style:normal;font-size:12px;font-family:var(--font-cn);color:var(--frost-2);margin-left:4px;font-weight:400}
+.gifts div span{font-size:12px;color:var(--frost-2);display:block;margin-top:6px}
+.lead{padding:22px}
+.lead h3{font-size:19px}
+.lead .desc{font-size:13px;color:var(--frost-2);margin-top:4px}
+.lead .fields{margin-top:16px}
+.lead .fine{margin-top:12px;font-size:12px;color:var(--frost-3);line-height:1.7}
+.lead .fine b{color:var(--frost-2);font-weight:500}
+
+/* ============================================================ 页脚 */
+footer{padding:48px 0 64px;border-top:1px solid rgba(111,239,255,.12);background:#070D24}
+footer .cols{display:grid;grid-template-columns:1.2fr 1fr 1fr;gap:28px;font-size:13px;color:var(--frost-2)}
+@media (max-width:760px){footer .cols{grid-template-columns:1fr}}
+footer h5{margin:0 0 10px;font-size:14px;color:var(--frost);font-weight:600}
+footer li{line-height:1.8}
+footer ul{margin:0;padding:0 0 0 1.1em}
+footer .meta{margin-top:34px;padding-top:18px;border-top:1px solid rgba(255,255,255,.08);font-size:12px;color:var(--frost-3);display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px}
+
+/* ===== v0.5 新增组件 ===== */
+.plans{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+@media (max-width:900px){.plans{grid-template-columns:1fr}}
+.plan{padding:24px;display:flex;flex-direction:column;gap:12px;position:relative}
+.plan .pn{font-size:17px;display:block}
+.plan .price{font-size:40px;color:var(--frost);margin-top:2px}
+.plan .price small{color:var(--frost-2);font-weight:500}
+.plan .pd{font-size:13px;color:var(--frost-2)}
+.plan ul{margin:4px 0 6px;padding:0;list-style:none;font-size:13px;color:var(--frost-2);line-height:2;flex:1}
+.plan ul li::before{content:"—";color:var(--cyan);margin-right:8px}
+.plan.pick{border-color:var(--line-strong);background:linear-gradient(165deg,rgba(46,107,255,.32),rgba(10,18,48,.55));box-shadow:0 18px 50px rgba(46,107,255,.2)}
+.plan .ribbon{position:absolute;top:-11px;right:18px;background:var(--cyan);color:#04121F;font-size:12px;font-weight:600;padding:2px 10px;border-radius:3px}
+.benefits{display:grid;grid-template-columns:repeat(4,1fr);gap:0;margin-top:22px;padding:18px 22px}
+@media (max-width:860px){.benefits{grid-template-columns:1fr 1fr;gap:14px}}
+.benefits >div b{display:block;font-size:14px;font-weight:600}
+.benefits >div span{display:block;font-size:12px;color:var(--frost-2);margin-top:3px;line-height:1.5}
+.benefits >div+div{border-left:1px solid rgba(111,239,255,.14);padding-left:20px}
+@media (max-width:860px){.benefits >div+div{border-left:0;padding-left:0}}
+
+.cert-right{padding:22px}
+.cert-right h3{font-size:18px}
+.rights{list-style:none;margin:14px 0 0;padding:0}
+.rights li{display:flex;flex-direction:column;gap:2px;padding:10px 0;border-top:1px solid rgba(111,239,255,.12)}
+.rights li:first-child{border-top:0}
+.rights li b{font-size:14px;font-weight:600;color:var(--cyan)}
+.rights li span{font-size:12px;color:var(--frost-2)}
+.stu-packs{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px}
+@media (max-width:700px){.stu-packs{grid-template-columns:1fr}}
+.stu-packs .pack{min-height:0}
+
+.mine .mine-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:6px}
+.mine .mine-grid >div{padding:14px 16px;border:1px solid var(--line);border-radius:var(--r);background:rgba(10,18,48,.45)}
+.mine .mine-grid span{font-size:12px;color:var(--frost-3);display:block}
+.mine .mine-grid b{font-size:26px;font-weight:700;display:block;margin-top:4px;line-height:1.1}
+.mine .mine-grid b.sky{color:var(--cyan)}
+.mine .mine-grid b.ember{color:var(--ember)}
+.rules{list-style:none;margin:0;padding:0}
+.rules li{display:flex;justify-content:space-between;padding:11px 4px;border-bottom:1px solid rgba(111,239,255,.1);font-size:14px;color:var(--frost-2)}
+.rules li b{color:var(--ember);font-family:var(--font-num);font-size:16px}
+.ladder{grid-template-columns:repeat(3,1fr)}
+
+
+.plans{grid-template-columns:repeat(4,1fr)}
+@media (max-width:1100px){.plans{grid-template-columns:1fr 1fr}}
+@media (max-width:620px){.plans{grid-template-columns:1fr}}
+.plan .pts{font-size:30px;font-weight:700;color:var(--cyan);line-height:1;margin-top:4px}
+.plan .pts small{font-size:12px;color:var(--frost-2);font-weight:500;margin-left:6px;font-family:var(--font-cn)}
+.plan .price{font-size:32px;margin-top:6px}
+.p2-bottom{display:grid;grid-template-columns:1.3fr .7fr;gap:14px;margin-top:22px}
+@media (max-width:900px){.p2-bottom{grid-template-columns:1fr}}
+.cost{width:100%;border-collapse:collapse;font-size:14px;margin-top:6px}
+.cost th{font-weight:500;font-size:12px;color:var(--frost-3);text-align:left;padding:6px 8px;border-bottom:1px solid var(--line)}
+.cost td{padding:10px 8px;border-bottom:1px solid rgba(111,239,255,.1)}
+.cost td:nth-child(2){color:var(--frost-2);font-size:13px}
+.cost td:last-child{color:var(--cyan);font-weight:700;font-size:16px;text-align:right}
+.cost th:last-child{text-align:right}
+.calc-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:6px}
+.calc-grid>div{padding:14px 12px;border:1px solid var(--line);border-radius:var(--r);background:rgba(10,18,48,.45);text-align:center}
+.calc-grid b{display:block;font-size:26px;font-weight:700;color:var(--ember);line-height:1}
+.calc-grid span{display:block;font-size:12px;color:var(--frost-2);margin-top:6px}
+
+/* ===== P8 尝鲜 ===== */
+.cheap.trial{grid-template-columns:260px 1fr}
+@media (max-width:960px){.cheap.trial{grid-template-columns:1fr}}
+.cheap .big .from{font-size:22px;font-family:var(--font-cn);font-weight:600;color:var(--frost-2);margin-left:8px;letter-spacing:0}
+.trial-steps{list-style:none;margin:18px 0 0;padding:0;counter-reset:t}
+.trial-steps li{display:flex;align-items:baseline;gap:10px;padding:8px 0;border-top:1px solid rgba(111,239,255,.12);font-size:13px;counter-increment:t}
+.trial-steps li::before{content:counter(t);width:20px;height:20px;border-radius:50%;background:var(--blue);color:#fff;font-family:var(--font-num);font-weight:700;font-size:11px;display:inline-grid;place-items:center;flex:none;position:relative;top:4px}
+.trial-steps li b{font-weight:600;min-width:64px}
+.trial-steps li span{color:var(--frost-2);font-size:12px}
+/* ===== P9 回归 ===== */
+.p9-grid{display:grid;grid-template-columns:1fr 1fr;gap:22px;align-items:stretch}
+@media (max-width:960px){.p9-grid{grid-template-columns:1fr}}
+.back-card{padding:32px;display:flex;flex-direction:column;justify-content:center}
+.back-status{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.back-amt{margin:26px 0 22px}
+.back-amt b{display:block;font-size:64px;font-weight:700;color:var(--cyan);line-height:1;letter-spacing:-.02em}
+.back-amt b i{font-style:normal;font-size:18px;color:var(--frost-2);font-family:var(--font-cn);font-weight:500;margin-left:8px}
+.back-amt span{display:block;font-size:13px;color:var(--frost-2);margin-top:10px}
+.back-done{display:inline-flex;align-items:center;height:42px;padding:0 18px;border-radius:var(--r);border:1px solid rgba(63,224,165,.4);background:rgba(63,224,165,.1);color:var(--ok);font-weight:600;font-size:14px}
+.p9-side{display:grid;gap:14px}
+.back-rights li b{color:var(--ember)}
+
+
+/* ===== P2 积分抵扣规则 ===== */
+.p2-bar{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:18px;flex-wrap:wrap}
+.rule-pop{position:relative}
+.rule-btn{display:inline-flex;align-items:center;gap:8px;height:36px;padding:0 14px;border-radius:var(--r);border:1px solid var(--line-strong);background:rgba(10,18,48,.5);color:var(--frost);font-size:14px;transition:background .18s,border-color .18s}
+.rule-btn i{width:18px;height:18px;border-radius:50%;border:1px solid var(--cyan);color:var(--cyan);font-style:normal;font-size:11px;font-weight:700;display:inline-grid;place-items:center;font-family:var(--font-num)}
+.rule-pop:hover .rule-btn,.rule-btn:focus-visible{background:rgba(111,239,255,.14);border-color:var(--cyan)}
+.rule-card{position:absolute;right:0;top:calc(100% + 10px);width:min(520px,90vw);padding:20px 22px;z-index:30;opacity:0;visibility:hidden;transform:translateY(-4px);transition:opacity .18s,transform .18s,visibility .18s;background:linear-gradient(160deg,#1B356F,#132757);box-shadow:0 24px 60px rgba(0,0,0,.45)}
+.rule-card::before{display:none}
+.rule-pop:hover .rule-card,.rule-pop:focus-within .rule-card{opacity:1;visibility:visible;transform:none}
+.rule-card h4{font-size:16px}
+.rule-card .cost{margin-top:10px}
+.rule-list{margin:14px 0 0;padding:12px 0 0 1.1em;border-top:1px solid rgba(111,239,255,.14);font-size:12px;color:var(--frost-2);line-height:1.9}
+@media (max-width:700px){.rule-card{left:0;right:auto}}
+
+/* ===== P8 一键配置 ===== */
+.cfg-open{margin-top:18px;gap:8px}
+.cfg-ico{width:14px;height:14px;border:2px solid currentColor;border-radius:3px;position:relative;display:inline-block}
+.cfg-ico::after{content:"";position:absolute;left:2px;top:2px;width:6px;height:2px;background:currentColor;box-shadow:0 4px 0 currentColor}
+.modal-box.cfg-box{width:min(600px,100%);text-align:left;padding:28px 30px}
+.cfg-tool b{white-space:nowrap}
+.cfg-box h3{font-size:22px}
+.cfg-sub{font-size:13px;color:var(--frost-2);margin-top:6px}
+.cfg-keys{margin-top:18px;display:grid;gap:8px}
+.cfg-row{display:grid;grid-template-columns:72px 1fr auto;align-items:center;gap:10px;padding:8px 10px;border:1px solid var(--line);border-radius:var(--r);background:rgba(10,18,48,.5)}
+.cfg-row span{font-size:12px;color:var(--frost-3)}
+.cfg-row code{font-family:var(--font-num);font-size:13px;color:var(--cyan);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.cfg-tools{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:18px}
+@media (max-width:520px){.cfg-tools{grid-template-columns:1fr 1fr}}
+.cfg-tool{display:flex;flex-direction:column;align-items:flex-start;gap:8px;padding:14px;border:1px solid var(--line);border-radius:var(--r);background:rgba(10,18,48,.45);color:var(--frost);text-align:left;transition:border-color .18s,background .18s}
+.cfg-tool:hover{border-color:var(--cyan);background:rgba(111,239,255,.1)}
+.cfg-tool i{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;font-style:normal;font-weight:700;font-size:13px;color:#fff;font-family:var(--font-num)}
+.cfg-tool b{font-size:14px;font-weight:600}
+.cfg-tool small{font-size:11px;color:var(--cyan)}
+.cfg-tool.copy small{color:var(--frost-3)}
+/* ===== P3 高校 + 人群 ===== */
+.edu-right{display:grid;gap:14px;align-content:start}
+.edu-pack{flex-direction:row!important;align-items:center;justify-content:space-between;gap:16px;min-height:0!important}
+.edu-pack .ep-l{display:flex;flex-direction:column;gap:8px;align-items:flex-start}
+.edu-pack .ep-r{display:flex;flex-direction:column;align-items:flex-end;gap:12px}
+.edu-pack .price{font-size:32px}
+.crowd-box{margin-top:22px;padding:22px}
+.crowd-box .crowd-tabs{margin:4px 0 18px}
+.crowd-box .crowd-tabs button{height:40px;padding:0 18px;font-size:14px}
+.crowd2{display:grid;grid-template-columns:300px 1fr;gap:16px}
+@media (max-width:900px){.crowd2{grid-template-columns:1fr}}
+.crowd-intro{padding:18px;border:1px solid var(--line);border-radius:var(--r);background:rgba(10,18,48,.45)}
+.crowd-intro h4{font-size:20px}
+.crowd-intro p{font-size:13px;color:var(--frost-2);margin-top:8px}
+.crowd-intro .chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:14px}
+.crowd-intro .chips em{font-style:normal;font-size:12px;padding:3px 8px;border-radius:4px;background:rgba(111,239,255,.12);border:1px solid rgba(111,239,255,.25);color:var(--frost)}
+.crowd-offers{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media (max-width:620px){.crowd-offers{grid-template-columns:1fr}}
+.offer{padding:18px;border:1px solid var(--line);border-radius:var(--r);background:rgba(10,18,48,.45);display:flex;flex-direction:column;gap:8px;align-items:flex-start}
+.offer h4{font-size:18px}
+.offer p{font-size:12px;color:var(--frost-2);flex:1}
+.offer .bottom{display:flex;align-items:flex-end;justify-content:space-between;width:100%;margin-top:6px}
+.offer .price{font-size:26px}
+/* ===== P7 抽奖 ===== */
+.p7-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:22px}
+@media (max-width:960px){.p7-grid{grid-template-columns:1fr}}
+.wheel-card{padding:30px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:22px}
+.wheel-stage{position:relative;width:340px;height:340px}
+@media (max-width:420px){.wheel-stage{width:300px;height:300px}.wheel-stage canvas{width:300px;height:300px}}
+.wheel-stage canvas{width:340px;height:340px;border-radius:50%;display:block}
+.wheel-ring{position:absolute;inset:-14px;border-radius:50%;border:1px solid rgba(111,239,255,.35);box-shadow:0 0 0 10px rgba(46,107,255,.12),0 0 60px rgba(46,107,255,.35);pointer-events:none}
+.wheel-ring::before,.wheel-ring::after{content:"";position:absolute;inset:-6px;border-radius:50%;border:1px dashed rgba(111,239,255,.25);animation:ringspin 24s linear infinite}
+.wheel-ring::after{inset:4px;animation-direction:reverse;animation-duration:36s;border-style:dotted}
+@keyframes ringspin{to{transform:rotate(360deg)}}
+.wheel-btn{position:absolute;left:50%;top:50%;width:92px;height:92px;transform:translate(-50%,-50%);border-radius:50%;border:3px solid #fff;background:linear-gradient(160deg,var(--blue),#1A45C8);color:#fff;font-weight:700;font-size:20px;display:flex;flex-direction:column;align-items:center;justify-content:center;line-height:1.1;box-shadow:0 10px 30px rgba(46,107,255,.5),0 0 0 6px rgba(46,107,255,.25);cursor:pointer}
+.wheel-btn small{font-size:11px;font-weight:500;color:rgba(255,255,255,.85);margin-top:3px}
+.wheel-btn::before{content:"";position:absolute;top:-22px;left:50%;transform:translateX(-50%);border:11px solid transparent;border-bottom:18px solid #fff;border-top:0}
+.wheel-actions{display:flex;align-items:center;gap:12px;flex-wrap:wrap;justify-content:center}
+.p7-side{display:grid;gap:14px;align-content:start}
+.prize-list{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:1fr 1fr;gap:0 18px}
+.prize-list li{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:8px 0;border-bottom:1px solid rgba(111,239,255,.1);font-size:13px}
+.prize-list li i{width:8px;height:8px;border-radius:2px;flex:none;margin-right:8px;display:inline-block}
+.prize-list li b{font-weight:500;display:flex;align-items:center}
+.prize-list li span{font-family:var(--font-num);color:var(--frost-3);font-size:12px}
+.winlog{margin-top:22px}
+.win-list{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+@media (max-width:860px){.win-list{grid-template-columns:1fr 1fr}}
+.win-list li{padding:12px 14px;border:1px solid var(--line);border-radius:var(--r);background:rgba(10,18,48,.45);font-size:13px}
+.win-list li b{display:block;color:var(--ember);font-weight:600}
+.win-list li small{display:block;color:var(--frost-3);font-size:11px;margin-top:4px;font-family:var(--font-num)}
+.win-list li.empty{grid-column:1/-1;text-align:center;color:var(--frost-3);background:none;border-style:dashed}
+.modal{position:fixed;inset:0;z-index:100;background:rgba(5,10,30,.72);display:flex;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(6px)}
+.modal-box{width:min(420px,100%);padding:32px 28px 24px;text-align:center;background:linear-gradient(160deg,#1B356F,#132757)}
+.modal-x{position:absolute;top:10px;right:12px;background:none;border:0;color:var(--frost-3);font-size:22px;line-height:1}
+.modal-k{font-size:13px;color:var(--cyan);letter-spacing:.14em}
+.modal-t{font-size:30px;font-weight:700;color:var(--ember);margin-top:10px;line-height:1.2}
+.modal-d{font-size:13px;color:var(--frost-2);margin-top:10px}
+.modal-a{display:flex;gap:10px;justify-content:center;margin-top:22px}
+.rules.disc li span{display:flex;flex-direction:column}.rules.disc li .nm{color:var(--frost);font-family:var(--font-cn);font-size:14px;font-weight:600}.rules.disc li small{font-size:11px;color:var(--frost-3)}
+.stu-packs .pack > .tag{align-self:flex-start}
+
+</style>
+</head>
+<body>
+<!-- ================= 顶栏 ================= -->
+<header class="top">
+  <a class="logo" href="#p1"><i></i>魔芋 AI</a>
+  <nav aria-label="活动板块">
+    <a href="#p1" data-nav="p1">主会场</a>
+    <a href="#p8" data-nav="p8">尝鲜专区</a>
+    <a href="#p2" data-nav="p2">积分套餐</a>
+    <a href="#p3" data-nav="p3">高校专区</a>
+    <a href="#p4" data-nav="p4">消耗榜单</a>
+    <a href="#p5" data-nav="p5">充值返额</a>
+    <a href="#p6" data-nav="p6">邀请拉新</a>
+    <a href="#p9" data-nav="p9">老客回归</a>
+    <a href="#p7" data-nav="p7">幸运抽奖</a>
+  </nav>
+  <div class="cd" id="topCd">
+    <span id="cdLabel">距开抢</span>
+    <b><span id="cdD">00</span><small>天</small><span id="cdH">00</span><small>时</small><span id="cdM">00</span><small>分</small><span id="cdS">00</span><small>秒</small></b>
+  </div>
+  <div class="me">余额 <em class="num">¥ 1,280.50</em> ｜ 额度 <em class="num">3.2 亿</em></div>
+</header>
+
+<aside class="rail" aria-hidden="true">
+  <a href="#p1" data-nav="p1">主会场</a>
+  <a href="#p8" data-nav="p8">尝鲜</a>
+  <a href="#p2" data-nav="p2">积分</a>
+  <a href="#p3" data-nav="p3">高校</a>
+  <a href="#p4" data-nav="p4">榜单</a>
+  <a href="#p5" data-nav="p5">返额</a>
+  <a href="#p6" data-nav="p6">邀请</a>
+  <a href="#p9" data-nav="p9">回归</a>
+  <a href="#p7" data-nav="p7">抽奖</a>
+</aside>
+
+<!-- ================= P1 主会场 ================= -->
+<section class="block" id="p1">
+  <div class="hero-bg" aria-hidden="true">
+    <video autoplay muted loop playsinline preload="auto" data-v="v1"></video>
+  </div>
+  <div class="ghost num" aria-hidden="true">12<b>.</b>12</div>
+
+  <div class="wrap hero">
+    <div>
+      <h1>魔芋双十二<br>携你触未来
+        <span class="date"><b>12.7</b> — <b>12.12</b> 六天 ｜ 每日 10:00 开抢</span>
+      </h1>
+      <p class="lede">官方合作厂商资源直供，文本、图片、视频模型一站式购买。积分、榜单、返额三重优惠同步开启。</p>
+      <div class="cta">
+        <a class="btn btn-c" href="#p2">购买积分</a>
+        <a class="btn btn-g" href="#p4">查看消耗榜单</a>
+      </div>
+      <div class="stats">
+        <div><b class="num">120<i>+</i></b><span>模型全线参与</span></div>
+        <div><b class="num">2<i>元起</i></b><span>新客尝鲜包</span></div>
+        <div><b class="num">8<i>折</i></b><span>上榜模型最低折扣</span></div>
+        <div><b class="num">3<i>%</i></b><span>充值返额上限</span></div>
+      </div>
+    </div>
+    <div></div>
+  </div>
+
+  <div class="wrap partners">
+    <div class="lbl">官方合作厂商与官方资源</div>
+    <div class="marq" aria-label="合作厂商展示">
+      <ul id="marq">
+        <li><i style="background:#1E5BFF">火</i><div><b>火山引擎 · 豆包 / Seedance</b><small>官方资源包直供</small></div><span class="tag">官方合作</span></li>
+        <li><i style="background:#0F6CF2">智</i><div><b>智谱 · GLM 系列</b><small>官方合作渠道</small></div><span class="tag">官方合作</span></li>
+        <li><i style="background:#4D6BFE">DS</i><div><b>DeepSeek</b><small>官方 API 直连</small></div><span class="tag">官方资源</span></li>
+        <li><i style="background:#6236FF">Q</i><div><b>阿里 · 通义千问 / 万相</b><small>官方资源包</small></div><span class="tag">官方资源</span></li>
+        <li><i style="background:#111;border:1px solid #444">K</i><div><b>可灵 Kling</b><small>视频生成官方合作</small></div><span class="tag">官方合作</span></li>
+        <li><i style="background:#2B2F77">V</i><div><b>Vidu · 生数科技</b><small>视频模型官方资源</small></div><span class="tag">官方资源</span></li>
+        <li><i style="background:#E8443A">M</i><div><b>MiniMax · 海螺</b><small>官方合作渠道</small></div><span class="tag">官方合作</span></li>
+        <li><i style="background:#0B8F6C">清</i><div><b>清程极智</b><small>国产算力资源</small></div><span class="tag mute">资源合作</span></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="wrap p1-grid">
+    <div>
+      <div class="partners" style="padding-top:0"><div class="lbl">品牌合作素材</div></div>
+      <div class="collab">
+        <a href="#p2">
+          <div class="art" style="background:radial-gradient(circle at 70% 20%,#6FEFFF 0%,#2E6BFF 45%,#0A1230 100%)"></div>
+          <span class="ph">素材位 1 · 竖版海报</span>
+          <b>豆包 Seedance 2.0<br>视频模型联名</b><small>官方资源 · 会员积分折扣</small>
+        </a>
+        <a href="#p4">
+          <div class="art" style="background:radial-gradient(circle at 30% 80%,#8B5CF6 0%,#1E3A8A 50%,#0A1230 100%)"></div>
+          <span class="ph">素材位 2 · 竖版海报</span>
+          <b>可灵 2.5 × 消耗榜单<br>视频模型专场</b><small>上榜模型 8–9 折</small>
+        </a>
+        <a href="#p3">
+          <div class="art" style="background:radial-gradient(circle at 50% 10%,#3FE0A5 0%,#0E4A6B 45%,#0A1230 100%)"></div>
+          <span class="ph">素材位 3 · 竖版海报</span>
+          <b>GLM × DeepSeek<br>高校论文季</b><small>学生认证 · 教育专享</small>
+        </a>
+      </div>
+    </div>
+    <div class="entries">
+      <a class="hud" href="#p8"><div><b>尝鲜专区</b><small>新客 2 / 6 / 9.9 元模型体验包</small></div><span class="go">2 元起</span></a>
+      <a class="hud" href="#p2"><div><b>积分套餐</b><small>会员积分每月到账，积分包随买随用</small></div><span class="go">看积分价格</span></a>
+      <a class="hud" href="#p3"><div><b>高校专区</b><small>学生认证，按身份推荐模型</small></div><span class="go">去认证</span></a>
+      <a class="hud" href="#p4"><div><b>消耗榜单</b><small>上榜模型消耗最高返 10%</small></div><span class="go">看今日榜单</span></a>
+      <a class="hud" href="#p5"><div><b>累充返额</b><small>累计充值最高返 3% 额度</small></div><span class="go">算我的返额</span></a>
+      <a class="hud" href="#p6"><div><b>邀请拉新</b><small>老带新，新人礼 + 阶梯加码</small></div><span class="go">邀请好友</span></a>
+      <a class="hud" href="#p9"><div><b>老客回归</b><small>30 天未消费，回归送 ¥20 余额</small></div><span class="go">领回归礼</span></a>
+      <a class="hud" href="#p7"><div><b>幸运抽奖</b><small>100% 中奖，余额、京东卡、实物</small></div><span class="go">去抽奖</span></a>
+    </div>
+  </div>
+</section>
+
+<!-- ================= P8 尝鲜专区 ================= -->
+<section class="block" id="p8">
+  <div class="bg" aria-hidden="true"><video autoplay muted loop playsinline preload="metadata" data-v="v6"></video></div>
+  <div class="wrap">
+    <div class="head">
+      <h2><span>尝鲜专区</span>新客 2 元起</h2>
+    </div>
+
+    <div class="hud lift cheap trial">
+      <div>
+        <div class="big num"><small>¥</small>2<span class="from">起</span></div>
+        <h3>模型体验包</h3>
+        <p class="sub">新客专享 · 每款限购 1 份</p>
+        <button class="btn btn-c cfg-open" id="cfgOpen" type="button"><i class="cfg-ico"></i>一键配置</button>
+      </div>
+      <div class="cheap-list" id="trialList">
+        <div data-id="t1"><span class="tag warm">新客专享</span><b>文本体验包</b><span>DeepSeek V3.2 / GLM-5 · 5,000 万 Token</span><div class="bottom"><span><span class="price"><small>¥</small>2</span><span class="was">¥19</span></span><button class="btn btn-p btn-s">立即购买</button></div></div>
+        <div data-id="t2"><span class="tag warm">新客专享</span><b>全模型体验包</b><span>文本 2 亿 Token + 出图 200 张</span><div class="bottom"><span><span class="price"><small>¥</small>6</span><span class="was">¥49</span></span><button class="btn btn-p btn-s">立即购买</button></div></div>
+        <div data-id="t3"><span class="tag warm">新客专享</span><b>视频尝鲜包</b><span>可灵 2.5 / Seedance 2.0 · 10 条视频</span><div class="bottom"><span><span class="price"><small>¥</small>9.9</span><span class="was">¥99</span></span><button class="btn btn-p btn-s">立即购买</button></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= P2 充值有礼 ================= -->
+<section class="block" id="p2">
+  <div class="bg" aria-hidden="true"><video autoplay muted loop playsinline preload="metadata" data-v="v2"></video></div>
+  <div class="wrap">
+    <div class="head">
+      <h2><span>积分套餐</span>按积分计费，全模型通用</h2>
+      <div class="aside"><b>积分怎么用</b>调用任意模型按积分扣减，积分统一结算，买得越多单价越低。会员积分每月到账，积分包随买随用。</div>
+    </div>
+    <div class="p2-bar">
+      <div class="tabs" id="cycleTabs">
+        <button class="on" data-cycle="m">会员 · 月付</button>
+        <button data-cycle="y">会员 · 年付 45 折</button>
+        <button data-cycle="p">积分包 · 一次性</button>
+      </div>
+      <div class="rule-pop">
+        <button class="rule-btn" type="button" aria-describedby="ruleCard"><i>i</i>积分抵扣规则</button>
+        <div class="rule-card hud" id="ruleCard" role="tooltip">
+          <h4>积分抵扣规则</h4>
+          <table class="cost">
+            <thead><tr><th>用途</th><th>模型</th><th>积分</th></tr></thead>
+            <tbody>
+              <tr><td>文本对话 · 每 1 万 Token</td><td>DeepSeek V3.2 / GLM-5</td><td class="num">2</td></tr>
+              <tr><td>推理 · 每 1 万 Token</td><td>DeepSeek R2</td><td class="num">8</td></tr>
+              <tr><td>出图 · 每张 1024²</td><td>通义万相 2.5 / Seedream 4</td><td class="num">20</td></tr>
+              <tr><td>视频 · 每条 5 秒 1080p</td><td>可灵 2.5 Turbo</td><td class="num">150</td></tr>
+              <tr><td>视频 · 每条 5 秒 1080p</td><td>豆包 Seedance 2.0</td><td class="num">120</td></tr>
+            </tbody>
+          </table>
+          <ul class="rule-list">
+            <li>调用任意模型按上表积分扣减，会员折扣与上榜模型折扣在扣减时自动生效</li>
+            <li>会员积分当月有效，积分包 12 个月有效</li>
+            <li>两者可叠加，优先扣除会员积分</li>
+            <li>积分不足时自动从账户余额扣费</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="plans" id="planGrid"></div>
+
+  </div>
+</section>
+
+<!-- ================= P3 高校专区 ================= -->
+<section class="block" id="p3">
+  <div class="bg" aria-hidden="true"><video autoplay muted loop playsinline preload="metadata" data-v="v3"></video></div>
+  <div class="wrap">
+    <div class="head">
+      <h2><span>高校专区</span>学生认证，教育专享</h2>
+      <div class="aside"><b>认证即享</b>认证送余额，充值额外加赠，DeepSeek V4 Pro 教育套餐包。</div>
+    </div>
+
+    <div class="p5-grid">
+      <div class="hud lift form">
+        <h3>学生身份认证</h3>
+        <p class="desc">校园邮箱或学信网信息认证</p>
+        <form id="certForm" novalidate>
+          <div class="fields" style="margin-top:16px">
+            <div class="fld"><label>校园邮箱</label><input type="email" placeholder="name@univ.edu.cn" required></div>
+            <div class="fld"><label>手机号</label><input type="tel" placeholder="用于认证结果通知"></div>
+            <div class="fld full"><label>学校 / 院系</label><input type="text" placeholder="XX 大学 · XX 学院"></div>
+            <div class="fld full"><label>认证方式</label>
+              <select><option>校园邮箱验证码</option><option>学信网在线验证</option></select>
+            </div>
+          </div>
+          <div class="act">
+            <button class="btn btn-g" type="button" id="sendCode">发送验证码</button>
+            <button class="btn btn-p" type="submit">提交认证</button>
+          </div>
+        </form>
+        <div class="ticket" id="certTicket"></div>
+      </div>
+
+      <div class="edu-right">
+        <div class="hud cert-right">
+          <h3>认证权益</h3>
+          <ul class="rights">
+            <li><b>认证即送 ¥10 余额</b><span>全模型通用</span></li>
+            <li><b>教育充值加赠 +5%</b><span>叠加充值有礼</span></li>
+            <li><b>DeepSeek V4 Pro 教育套餐包</b><span>认证用户专享</span></li>
+          </ul>
+        </div>
+        <div class="hud pack edu-pack">
+          <div class="ep-l">
+            <span class="tag">教育专享</span>
+            <h4>DeepSeek V4 Pro 教育套餐包</h4>
+            <div class="models"><em>DeepSeek V4 Pro</em><em>5,000 万 Token</em><em>30 天有效</em></div>
+          </div>
+          <div class="ep-r">
+            <span><span class="price"><small>¥</small>19</span><span class="was">¥39</span></span>
+            <button class="btn btn-p btn-s" data-toast="已加入购物车：DeepSeek V4 Pro 教育套餐包">立即购买</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="hud crowd-box">
+      <div class="ph"><div><h3>按身份推荐</h3></div></div>
+      <div class="crowd-tabs" id="crowdTabs">
+        <button class="on" data-crowd="stu">高校学生</button>
+        <button data-crowd="opc">OPC 一人公司</button>
+        <button data-crowd="media">自媒体创作者</button>
+        <button data-crowd="dev">开发者</button>
+        <button data-crowd="design">设计师</button>
+      </div>
+      <div class="crowd2">
+        <div class="crowd-intro" id="crowdIntro"></div>
+        <div class="crowd-offers" id="crowdOffers"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= P4 消耗榜单 ================= -->
+<section class="block" id="p4">
+  <div class="bg" aria-hidden="true"><video autoplay muted loop playsinline preload="metadata" data-v="v4"></video></div>
+  <div class="wrap">
+    <div class="head">
+      <h2><span>消耗榜单</span>活动期模型消耗排行，上榜模型 8–9 折</h2>
+      <div class="aside"><b>折扣</b>第 1–3 名模型 8 折；第 4–10 名 8.5 折；第 11–20 名 9 折。折扣次日生效，全站用户通用。</div>
+    </div>
+
+    <div class="p2-grid">
+      <div class="hud panel">
+        <div class="ph">
+          <div><h3>模型消耗榜</h3><p>12.7 00:00 起累计，按全站调用消耗金额排序</p></div>
+          <span class="tag ok">进行中</span>
+        </div>
+        <div class="tabs" id="rankTabs">
+          <button class="on" data-rank="all">总榜</button>
+          <button data-rank="txt">文本模型</button>
+          <button data-rank="vid">视频模型</button>
+          <button data-rank="img">图片模型</button>
+        </div>
+        <div class="rank-head"><span>排名 / 模型</span><span>累计消耗 · 当前折扣</span></div>
+        <ol class="rank" id="rankList"></ol>
+        <div class="rank-foot">
+          <p class="note">榜单每小时更新，折扣次日 00:00 生效。</p>
+          <a class="btn btn-g btn-s" href="#p2">去调用</a>
+        </div>
+      </div>
+
+      <div class="hud panel mine">
+        <div class="ph"><div><h3>今日生效折扣</h3><p>根据昨日榜单结算</p></div><span class="tag ok">已生效</span></div>
+        <ul class="rules disc" id="discList">
+          <li><span><b class="nm">DeepSeek V3.2</b><small>文本 · 第 1 名</small></span><b>8 折</b></li>
+          <li><span><b class="nm">可灵 2.5 Turbo</b><small>视频 · 第 2 名</small></span><b>8 折</b></li>
+          <li><span><b class="nm">豆包 Seedance 2.0</b><small>视频 · 第 3 名</small></span><b>8 折</b></li>
+          <li><span><b class="nm">GLM-5</b><small>文本 · 第 4 名</small></span><b>8.5 折</b></li>
+          <li><span><b class="nm">通义万相 2.5</b><small>图片 · 第 5 名</small></span><b>8.5 折</b></li>
+          <li><span><b class="nm">Qwen3 Coder</b><small>文本 · 第 6 名</small></span><b>8.5 折</b></li>
+        </ul>
+        <div class="rank-head" style="margin-top:22px"><span>折扣规则</span><span>按榜单名次</span></div>
+        <ul class="rules">
+          <li><span>第 1–3 名模型</span><b>8 折</b></li>
+          <li><span>第 4–10 名模型</span><b>8.5 折</b></li>
+          <li><span>第 11–20 名模型</span><b>9 折</b></li>
+        </ul>
+        <a class="btn btn-p" href="#p2" style="margin-top:18px">会员折上折</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= P5 充值返额 ================= -->
+<section class="block" id="p5">
+  <div class="bg" aria-hidden="true"><video autoplay muted loop playsinline preload="metadata" data-v="v2"></video></div>
+  <div class="wrap">
+    <div class="head">
+      <h2><span>充值返额</span>活动期累计充值，最高返 3% 额度</h2>
+      <div class="aside"><b>怎么返</b>按 12.7–12.12 累计充值就高取档，返额以平台额度发放，全模型通用。</div>
+    </div>
+
+    <div class="p3-grid">
+      <div class="hud lift gauge">
+        <div class="in">
+          <label for="amt">活动期累计充值</label>
+          <div class="field"><span>¥</span><input id="amt" class="num" type="number" min="0" step="100" value="5000" inputmode="numeric"></div>
+          <div class="quick">
+            <button data-q="1000">1000</button><button data-q="5000">5000</button><button data-q="20000">20000</button>
+          </div>
+        </div>
+
+        <div class="track" id="track">
+          <div class="fill" id="fill"></div>
+          <div class="tick" style="left:12%"><b>¥1,000</b>返 1%</div>
+          <div class="tick" style="left:52%"><b>¥5,000</b>返 2%</div>
+          <div class="tick" style="left:100%"><b>¥20,000</b>返 3%</div>
+        </div>
+
+        <div class="out">
+          <div><span>当前档位</span><b id="oTier">返 2%</b><small id="oTierTip">已达 ¥5,000 档</small></div>
+          <div><span>已返额度</span><b class="ember" id="oBack">¥100</b><small>充值到账后即时发放</small></div>
+          <div><span>距下一档</span><b id="oNext">¥15,000</b><small id="oNextTip">再充 ¥15,000 升至 3%</small></div>
+        </div>
+
+        <div style="display:flex;gap:10px;margin-top:24px;flex-wrap:wrap">
+          <button class="btn btn-p" id="goRecharge">去充值</button>
+          <a class="btn btn-g" href="#p4">看消耗榜单</a>
+        </div>
+      </div>
+
+      <div class="hud tiers">
+        <h3 style="font-size:18px">返额档位</h3>
+        <table id="tierTable">
+          <thead><tr><th>累计充值</th><th>返额</th><th>到账时间</th></tr></thead>
+          <tbody>
+            <tr data-min="1000"><td>¥1,000 起</td><td class="pct">1%</td><td>即时</td></tr>
+            <tr data-min="5000"><td>¥5,000 起</td><td class="pct">2%</td><td>即时</td></tr>
+            <tr data-min="20000"><td>¥20,000 起</td><td class="pct">3%</td><td>即时</td></tr>
+          </tbody>
+        </table>
+        <p class="note" style="margin-top:14px">返额额度有效期 90 天，可与其他优惠叠加使用。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= P6 邀请拉新 ================= -->
+<section class="block" id="p6">
+  <div class="bg" aria-hidden="true"><video autoplay muted loop playsinline preload="metadata" data-v="v3"></video></div>
+  <div class="wrap">
+    <div class="head">
+      <h2><span>邀请拉新</span>老带新，阶梯加码</h2>
+      <div class="aside"><b>玩法</b>分享邀请码或海报，好友注册完成实名即得新人礼；邀请人数达标额外加码。</div>
+    </div>
+
+    <div class="p6-grid">
+      <div class="hud lift invite">
+        <h3 style="font-size:20px">我的邀请码</h3>
+        <div class="code"><b>MY1212K8</b><button class="btn btn-c btn-s" data-toast="邀请码已复制">复制邀请码</button><button class="btn btn-g btn-s" data-toast="海报已生成，长按保存或分享">生成海报</button></div>
+
+        <div class="gifts">
+          <div><b class="num">1,000<i>万 Token</i></b><span>新人完成实名</span></div>
+          <div><b class="num">1<i>亿 Token</i></b><span>新人完成企业认证</span></div>
+          <div><b class="num">5,000<i>万 Token</i></b><span>90 天未活跃老客回归</span></div>
+        </div>
+
+        <div class="ladder" id="ladder">
+          <div class="hit"><span>邀请满 3 人</span><b class="num">+3,000 万</b><small>Token 加码</small></div>
+          <div><span>邀请满 5 人</span><b class="num">+8,000 万</b><small>Token + ¥20 代金券</small></div>
+          <div><span>邀请满 10 人</span><b class="num">+2 亿</b><small>Token + 专属折扣包</small></div>
+        </div>
+        <p class="note" style="margin-top:14px">已邀请 <b class="num" style="color:var(--cyan)">4</b> 人，其中 <b class="num" style="color:var(--cyan)">2</b> 人已成单。</p>
+      </div>
+
+      <div class="hud lead">
+        <h3>领取新人礼</h3>
+        <p class="desc">填写手机号完成注册，新人礼自动到账。</p>
+        <form id="leadForm" novalidate>
+          <div class="fields">
+            <div class="fld full"><label>手机号</label><input id="l1" type="tel" placeholder="接收验证码与到账提醒"></div>
+            <div class="fld"><label>邀请码</label><input id="l2" type="text" value="MY1212K8"></div>
+            <div class="fld"><label>身份</label><select><option>个人 / 学生</option><option>自媒体 / 工作室</option><option>企业 / 开发团队</option><option>高校 / 科研单位</option></select></div>
+          </div>
+          <div class="act">
+            <p class="note">领取后即得 1 次<a href="#p7" style="color:var(--cyan)">幸运抽奖</a>机会。</p>
+            <button class="btn btn-p" type="submit">领取新人礼</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= P9 老客回归 ================= -->
+<section class="block" id="p9">
+  <div class="bg" aria-hidden="true"><video autoplay muted loop playsinline preload="metadata" data-v="vw"></video></div>
+  <div class="wrap">
+    <div class="head">
+      <h2><span>老客回归</span>30 天未消费，回归有礼</h2>
+    </div>
+
+    <div class="p9-grid">
+      <div class="hud lift back-card">
+        <div class="back-status"><span class="tag ok">老客户专享</span></div>
+        <div class="back-amt"><b class="num">5,000<i>万 Token</i></b><span>回归礼包 · 15 天有效</span></div>
+        <div id="backBox"><button class="btn btn-p" id="btnClaimBack" type="button">领取回归礼包</button></div>
+      </div>
+
+      <div class="p9-side">
+        <div class="hud panel">
+          <div class="ph"><div><h3>回归专享</h3></div></div>
+          <ul class="rights back-rights">
+            <li><b>积分包 8 折</b><span>任意档位</span></li>
+            <li><b>会员首月 5 折</b><span>任意会员</span></li>
+            <li><b>充值返额 +1%</b><span>可叠加</span></li>
+          </ul>
+        </div>
+        <div class="stu-packs">
+          <div class="hud pack">
+            <span class="tag">回归价</span>
+            <h4>回归积分包</h4>
+            <div class="models"><em>3,000 积分</em><em>全模型通用</em></div>
+            <div class="bottom"><span><span class="price"><small>¥</small>40</span><span class="was">¥50</span></span><button class="btn btn-p btn-s" data-toast="已加入购物车：回归积分包">立即购买</button></div>
+          </div>
+          <div class="hud pack">
+            <span class="tag">回归价</span>
+            <h4>标准会员首月</h4>
+            <div class="models"><em>8,000 积分 / 月</em><em>模型 95 折</em></div>
+            <div class="bottom"><span><span class="price"><small>¥</small>49</span><span class="was">¥99</span></span><button class="btn btn-p btn-s" data-toast="已选择标准会员首月 5 折，请在支付页完成">立即开通</button></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= P7 幸运抽奖 ================= -->
+<section class="block" id="p7">
+  <div class="bg" aria-hidden="true"><video autoplay muted loop playsinline preload="metadata" data-v="v4"></video></div>
+  <div class="wrap">
+    <div class="head">
+      <h2><span>幸运抽奖</span>100% 中奖，转到什么拿什么</h2>
+      <div class="aside"><b>奖池</b>Token 额度、模型折扣券、京东卡与实物大奖，虚拟奖品即时到账。</div>
+    </div>
+
+    <div class="p7-grid">
+      <div class="hud lift wheel-card">
+        <div class="wheel-stage">
+          <div class="wheel-ring"></div>
+          <canvas id="wheel" width="340" height="340"></canvas>
+          <button class="wheel-btn" id="btnSpin" type="button">抽奖<small id="spinLeft">3 次</small></button>
+        </div>
+        <div class="wheel-actions">
+          <span class="tag">剩余 <b id="spinNum" class="num">3</b> 次</span>
+          <button class="btn btn-p" id="btnSpin2" type="button">抽一次</button>
+          <button class="btn btn-g" id="btnSpinAll" type="button">连抽到底</button>
+        </div>
+      </div>
+
+      <div class="p7-side">
+        <div class="hud panel">
+          <div class="ph"><div><h3>奖品与概率</h3></div><span class="tag mute">概率公示</span></div>
+          <ul class="prize-list" id="prizeTable"></ul>
+        </div>
+        <div class="hud panel">
+          <div class="ph"><div><h3>抽奖次数怎么得</h3></div></div>
+          <ul class="rules">
+            <li><span>注册并完成实名</span><b>+1 次</b></li>
+            <li><span>开通任意会员</span><b>+2 次</b></li>
+            <li><span>每充值满 ¥1,000</span><b>+2 次</b></li>
+            <li><span>邀请好友满 3 人</span><b>+1 次</b></li>
+            <li><span>企业认证</span><b>+3 次</b></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="hud panel winlog">
+      <div class="ph"><div><h3>我的中奖记录</h3></div><span class="note">实物奖品于活动结束后 15 个工作日内寄出</span></div>
+      <ul id="winLog" class="win-list"><li class="empty">还没有中奖记录，转一次试试</li></ul>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="meta"><span>魔芋双十二 · 携你触未来 · 12.7 – 12.12</span><span>会员积分与积分包可叠加使用，具体以账户到账为准</span></div>
+  </div>
+</footer>
+
+
+<div class="modal" id="cfgModal" hidden>
+  <div class="modal-box hud cfg-box" role="dialog" aria-modal="true" aria-labelledby="cfgTitle">
+    <button class="modal-x" id="cfgX" type="button" aria-label="关闭">×</button>
+    <h3 id="cfgTitle">一键配置</h3>
+    <p class="cfg-sub">选择你使用的工具，自动填入接口地址和密钥</p>
+    <div class="cfg-keys">
+      <div class="cfg-row"><span>接口地址</span><code id="cfgUrl">https://api.moyu.ai/v1</code><button class="btn btn-g btn-s" type="button" data-copy="cfgUrl">复制</button></div>
+      <div class="cfg-row"><span>API Key</span><code id="cfgKey">sk-moyu-••••••••••••</code><button class="btn btn-g btn-s" type="button" data-copy="cfgKey">复制</button></div>
+    </div>
+    <div class="cfg-tools" id="cfgTools"></div>
+  </div>
+</div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<div class="modal" id="modal" hidden><div class="modal-box hud"><button class="modal-x" id="modalX" type="button" aria-label="关闭">×</button><div class="modal-k" id="modalK"></div><div class="modal-t" id="modalT"></div><div class="modal-d" id="modalD"></div><div class="modal-a"><button class="btn btn-g" id="modalAgain" type="button">再抽一次</button><button class="btn btn-p" id="modalOk" type="button">收下</button></div></div></div>
+
+<script>
+/* ---------- 工具 ---------- */
+const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
+const fmt=n=>n.toLocaleString('zh-CN');
+let tt; function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('show');clearTimeout(tt);tt=setTimeout(()=>t.classList.remove('show'),2600)}
+document.addEventListener('click',e=>{const b=e.target.closest('[data-toast]');if(b){e.preventDefault();toast(b.dataset.toast)}});
+
+/* ---------- 倒计时 ---------- */
+(function(){
+  const start=new Date('2026-12-07T10:00:00+08:00'), end=new Date('2026-12-12T23:59:59+08:00');
+  const d=$('#cdD'),h=$('#cdH'),m=$('#cdM'),s=$('#cdS'),l=$('#cdLabel');
+  function tick(){
+    const now=new Date(); let target=start, label='距开抢';
+    if(now>=start&&now<end){target=end;label='距结束'} else if(now>=end){target=now;label='活动已结束'}
+    let diff=Math.max(0,target-now)/1000;
+    const dd=Math.floor(diff/86400);diff-=dd*86400;const hh=Math.floor(diff/3600);diff-=hh*3600;const mm=Math.floor(diff/60);const ss=Math.floor(diff-mm*60);
+    d.textContent=String(dd).padStart(2,'0');h.textContent=String(hh).padStart(2,'0');m.textContent=String(mm).padStart(2,'0');s.textContent=String(ss).padStart(2,'0');l.textContent=label;
+  }
+  tick();setInterval(tick,1000);
+})();
+
+/* ---------- 滚动高亮 ---------- */
+(function(){
+  const ids=['p1','p8','p2','p3','p4','p5','p6','p9','p7'];
+  const io=new IntersectionObserver(es=>{es.forEach(en=>{if(en.isIntersecting){$$('[data-nav]').forEach(a=>a.classList.toggle('on',a.dataset.nav===en.target.id))}})},{rootMargin:'-40% 0px -55% 0px'});
+  ids.forEach(id=>io.observe($('#'+id)));
+})();
+
+/* ---------- 跑马灯无缝 ---------- */
+(function(){const u=$('#marq');u.innerHTML+=u.innerHTML;})();
+
+/* ---------- P3 人群推荐 ---------- */
+const CROWD={
+  stu:{t:'高校学生',d:'论文写作、文献检索、课程作业',m:['DeepSeek V4 Pro','GLM-5','Kimi K3'],
+       o:[{k:'教育专享',n:'DeepSeek V4 Pro 教育套餐包',d:'5,000 万 Token · 30 天有效',p:'¥19',w:'¥39',btn:'立即购买',pkg:true},
+          {k:'学生充值',n:'充 ¥100 送 ¥10',d:'含教育加赠 +5% · 到账 ¥110',p:'+10%',btn:'立即充值'}]},
+  opc:{t:'OPC 一人公司',d:'文案、客服、合同、轻量出图一站完成',m:['DeepSeek V4 Pro','GLM-5','通义万相 2.5'],
+       o:[{k:'主力档',n:'充 ¥1,000 送 ¥80',d:'到账 ¥1,080 · 全模型通用',p:'+8%',btn:'立即充值'},
+          {k:'入门档',n:'充 ¥500 送 ¥30',d:'到账 ¥530 · 全模型通用',p:'+6%',btn:'立即充值'}]},
+  media:{t:'自媒体创作者',d:'短视频、封面图、口播配音批量产出',m:['可灵 2.5 Turbo','豆包 Seedance 2.0','通义万相 2.5'],
+       o:[{k:'日更档',n:'充 ¥5,000 送 ¥450',d:'到账 ¥5,450 · 视频模型通用',p:'+9%',btn:'立即充值'},
+          {k:'起步档',n:'充 ¥1,000 送 ¥80',d:'到账 ¥1,080 · 视频模型通用',p:'+8%',btn:'立即充值'}]},
+  dev:{t:'开发者',d:'代码生成、长上下文、Agent 工具调用',m:['DeepSeek V4 Pro','Qwen3 Coder','Kimi K3'],
+       o:[{k:'团队档',n:'充 ¥20,000 送 ¥2,200',d:'到账 ¥22,200 · API 通用',p:'+11%',btn:'立即充值'},
+          {k:'个人档',n:'充 ¥5,000 送 ¥450',d:'到账 ¥5,450 · API 通用',p:'+9%',btn:'立即充值'}]},
+  design:{t:'设计师',d:'概念图、产品图、局部重绘与风格统一',m:['Seedream 4','通义万相 2.5','Flux.1 Pro'],
+       o:[{k:'主力档',n:'充 ¥1,000 送 ¥80',d:'到账 ¥1,080 · 图片模型通用',p:'+8%',btn:'立即充值'},
+          {k:'入门档',n:'充 ¥500 送 ¥30',d:'到账 ¥530 · 图片模型通用',p:'+6%',btn:'立即充值'}]}
+};
+function renderCrowd(k){const c=CROWD[k];
+  $('#crowdIntro').innerHTML=`<h4>${c.t}</h4><p>${c.d}</p><div class="chips">${c.m.map(x=>`<em>${x}</em>`).join('')}</div>`;
+  $('#crowdOffers').innerHTML=c.o.map(o=>`<div class="offer"><span class="tag ${o.pkg?'':'warm'}">${o.k}</span><h4>${o.n}</h4><p>${o.d}</p>
+    <div class="bottom">${o.pkg?`<span><span class="price"><small>¥</small>${o.p.slice(1)}</span><span class="was">${o.w}</span></span>`:`<span class="price">${o.p}</span>`}
+    <button class="btn btn-p btn-s" data-toast="${o.pkg?'已加入购物车：'+o.n:'将跳转充值页：'+o.n}">${o.btn}</button></div></div>`).join('');
+}
+$('#crowdTabs').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;$$('#crowdTabs button').forEach(x=>x.classList.toggle('on',x===b));renderCrowd(b.dataset.crowd)});
+renderCrowd('stu');
+
+/* ---------- P2 积分套餐 ---------- */
+const PLANS={
+  m:[{n:'轻享会员',pts:2000,price:29,per:'0.0145',d:'个人日常对话与出图',f:['每月 2,000 积分','全模型通用','并发 5'],cta:'立即订阅'},
+     {n:'标准会员',pts:8000,price:99,per:'0.0124',d:'创作者与小团队主力档',f:['每月 8,000 积分','模型调用 95 折','并发 20'],cta:'立即订阅',pick:true},
+     {n:'专业会员',pts:28000,price:299,per:'0.0107',d:'高频视频产出',f:['每月 28,000 积分','模型调用 9 折','并发 50'],cta:'立即订阅'},
+     {n:'旗舰会员',pts:100000,price:899,per:'0.0090',d:'团队与企业级用量',f:['每月 100,000 积分','模型调用 85 折','并发不限 · 专属客服'],cta:'立即订阅'}],
+  y:[{n:'轻享会员',pts:2000,price:157,per:'0.0065',d:'个人日常对话与出图',f:['每月 2,000 积分','全模型通用','并发 5'],cta:'立即订阅',unit:'/ 年'},
+     {n:'标准会员',pts:8000,price:535,per:'0.0056',d:'创作者与小团队主力档',f:['每月 8,000 积分','模型调用 95 折','并发 20'],cta:'立即订阅',pick:true,unit:'/ 年'},
+     {n:'专业会员',pts:28000,price:1615,per:'0.0048',d:'高频视频产出',f:['每月 28,000 积分','模型调用 9 折','并发 50'],cta:'立即订阅',unit:'/ 年'},
+     {n:'旗舰会员',pts:100000,price:4855,per:'0.0040',d:'团队与企业级用量',f:['每月 100,000 积分','模型调用 85 折','并发不限 · 专属客服'],cta:'立即订阅',unit:'/ 年'}],
+  p:[{n:'体验积分包',pts:3000,price:50,per:'0.0167',d:'随买随用，12 个月有效',f:['3,000 积分','全模型通用','可叠加会员'],cta:'立即购买',unit:''},
+     {n:'标准积分包',pts:13000,price:200,per:'0.0154',d:'随买随用，12 个月有效',f:['13,000 积分','全模型通用','可叠加会员'],cta:'立即购买',unit:'',pick:true},
+     {n:'大额积分包',pts:70000,price:1000,per:'0.0143',d:'随买随用，12 个月有效',f:['70,000 积分','全模型通用','支持开票'],cta:'立即购买',unit:''},
+     {n:'企业积分包',pts:400000,price:5000,per:'0.0125',d:'随买随用，12 个月有效',f:['400,000 积分','全模型通用','支持开票 · 专属客服'],cta:'立即购买',unit:''}]
+};
+function renderPlans(k){
+  $('#planGrid').innerHTML=PLANS[k].map(p=>`<div class="hud plan ${p.pick?'pick':''}">${p.pick?'<span class="ribbon">推荐</span>':''}<b class="pn">${p.n}</b>
+    <div class="pts num">${p.pts.toLocaleString()}<small>积分${k==='p'?'':' / 月'}</small></div>
+    <div class="price"><small>¥</small><span class="pv">${p.price.toLocaleString()}</span><small class="pu">${p.unit!==undefined?p.unit:'/ 月'}</small></div>
+    <p class="pd">${p.d} · 每积分 ¥${p.per}</p>
+    <ul>${p.f.map(x=>`<li>${x}</li>`).join('')}</ul>
+    <button class="btn ${p.pick?'btn-p':'btn-g'}" data-toast="已选择 ${p.n} · ¥${p.price}，请在支付页完成">${p.cta}</button></div>`).join('');
+}
+$('#cycleTabs').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;$$('#cycleTabs button').forEach(x=>x.classList.toggle('on',x===b));renderPlans(b.dataset.cycle)});
+renderPlans('m');
+
+/* ---------- P3 学生认证 ---------- */
+$('#sendCode').addEventListener('click',()=>toast('验证码已发送至校园邮箱'));
+$('#certForm').addEventListener('submit',e=>{e.preventDefault();
+  const t=$('#certTicket');t.innerHTML='认证通过，¥10 余额已到账，教育加赠已开通。';t.classList.add('show');
+  toast('学生认证成功')});
+
+/* ---------- P4 榜单 ---------- */
+const RANK={
+  all:[['DeepSeek V3.2','文本','128,600'],['可灵 2.5 Turbo','视频','112,400'],['豆包 Seedance 2.0','视频','96,100'],['GLM-5','文本','84,200'],['通义万相 2.5','图片','73,500'],['Qwen3 Coder','文本','61,800'],['Vidu Q3','视频','49,200'],['Seedream 4','图片','37,600'],['Kimi K3','文本','29,400'],['MiniMax 海螺 02','视频','21,800']],
+  txt:[['DeepSeek V3.2','文本','128,600'],['GLM-5','文本','84,200'],['Qwen3 Coder','文本','61,800'],['Kimi K3','文本','29,400'],['DeepSeek R2','文本','24,100'],['Qwen3 Turbo','文本','18,600']],
+  vid:[['可灵 2.5 Turbo','视频','112,400'],['豆包 Seedance 2.0','视频','96,100'],['Vidu Q3','视频','49,200'],['MiniMax 海螺 02','视频','21,800'],['Seedance Lite','视频','16,300']],
+  img:[['通义万相 2.5','图片','73,500'],['Seedream 4','图片','37,600'],['Flux.1 Pro','图片','22,900'],['Qwen Image Edit','图片','12,400'],['Kling Image','图片','8,600']]
+};
+function rewardOf(i){return i<3?'8 折':i<10?'8.5 折':'9 折'}
+function renderRank(k){
+  const list=RANK[k], max=Math.max(...list.map(r=>+r[2].replace(/,/g,'')));
+  $('#rankList').innerHTML=list.map((r,i)=>{const val=+r[2].replace(/,/g,'');
+    return `<li><span class="no">${i+1}</span><span class="who"><b>${r[0]}</b><small>${r[1]}模型</small></span><span class="bar"><i style="width:${Math.max(4,val/max*100)}%"></i></span><span class="amt">¥${r[2]}<small style="display:block;color:var(--ember)">${rewardOf(i)}</small></span></li>`}).join('');
+}
+$('#rankTabs').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;$$('#rankTabs button').forEach(x=>x.classList.toggle('on',x===b));renderRank(b.dataset.rank)});
+renderRank('all');
+
+/* ---------- P5 返额 ---------- */
+const TIERS=[[1000,.01],[5000,.02],[20000,.03]];
+const POS={0:0,1000:12,5000:52,20000:100};
+function pos(v){if(v>=20000)return 100;const ks=[0,1000,5000,20000];
+  for(let i=1;i<ks.length;i++){if(v<=ks[i]){const a=ks[i-1],b=ks[i];return POS[a]+(POS[b]-POS[a])*((v-a)/(b-a))}}return 0}
+function calc(){
+  const v=Math.max(0,+$('#amt').value||0);
+  $('#fill').style.width=pos(v)+'%';
+  let tier=null;TIERS.forEach(t=>{if(v>=t[0])tier=t});
+  $$('#track .tick').forEach((tk,i)=>tk.classList.toggle('hit',[1000,5000,20000][i]<=v));
+  $$('#tierTable tbody tr').forEach(tr=>tr.classList.toggle('hit',tier&&+tr.dataset.min===tier[0]));
+  const back=tier?Math.floor(v*tier[1]):0;
+  $('#oTier').textContent=tier?`返 ${tier[1]*100}%`:'未达档';
+  $('#oTierTip').textContent=tier?`已达 ¥${fmt(tier[0])} 档`:'充值满 ¥1,000 开始返额';
+  $('#oBack').textContent='¥'+fmt(back);
+  const next=TIERS.find(t=>t[0]>v);
+  if(next){$('#oNext').textContent='¥'+fmt(next[0]-v);$('#oNextTip').textContent=`再充 ¥${fmt(next[0]-v)} 升至 ${next[1]*100}%`}
+  else{$('#oNext').textContent='已满档';$('#oNextTip').textContent='返额上限 3%'}
+}
+$('#amt').addEventListener('input',calc);
+$$('.quick button').forEach(b=>b.addEventListener('click',()=>{$('#amt').value=b.dataset.q;calc()}));
+$('#goRecharge').addEventListener('click',()=>toast(`将跳转充值页，当前累计 ¥${fmt(+$('#amt').value||0)}，返额即时到账`));
+calc();
+
+/* ---------- P6 线索 ---------- */
+$('#leadForm').addEventListener('submit',e=>{e.preventDefault();const ph=$('#l1').value.trim();
+  if(!/^1\d{10}$/.test(ph)){toast('请填写 11 位手机号');$('#l1').focus();return}
+  toast('新人礼已发放到账户，邀请关系已绑定 '+$('#l2').value)});
+
+
+/* ---------- P8 尝鲜：购买后切原价 ---------- */
+$('#trialList').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;const card=b.closest('div[data-id]');
+  if(card.classList.contains('bought')){toast('每位新客限购 1 份');return}
+  card.classList.add('bought');const p=$('.price',card),w=$('.was',card);const orig=w.textContent.replace('¥','');p.innerHTML=`<small>¥</small>${orig}`;w.remove();b.textContent='原价购买';b.classList.replace('btn-p','btn-g');const t=card.querySelector('.tag');t.textContent='已购买';t.classList.replace('warm','mute');
+  toast('购买成功，已到账')});
+
+/* ---------- P9 回归礼包 ---------- */
+$('#btnClaimBack').addEventListener('click',()=>{$('#backBox').innerHTML='<span class="back-done">已领取 5,000 万 Token</span>';toast('回归礼包已到账')});
+
+/* ---------- P8 一键配置 ---------- */
+(function(){
+  const TOOLS=[
+    {n:'Cherry Studio',c:'#E5484D',a:'C',imp:true},{n:'Chatbox',c:'#2E6BFF',a:'Cb',imp:true},{n:'LobeChat',c:'#111',a:'L',imp:true},
+    {n:'NextChat',c:'#1F9D55',a:'N',imp:true},{n:'Cursor',c:'#3A3A3A',a:'Cu',imp:false},{n:'代码 / SDK',c:'#6236FF',a:'{}',imp:false}];
+  const m=$('#cfgModal');
+  function key(){const c='abcdefghijkmnpqrstuvwxyz23456789';let k='sk-moyu-';for(let i=0;i<24;i++)k+=c[Math.floor(Math.random()*c.length)];return k}
+  $('#cfgTools').innerHTML=TOOLS.map(t=>`<button type="button" class="cfg-tool ${t.imp?'':'copy'}" data-tool="${t.n}" data-imp="${t.imp?1:0}"><i style="background:${t.c}">${t.a}</i><b>${t.n}</b><small>${t.imp?'一键导入':'复制配置'}</small></button>`).join('');
+  $('#cfgOpen').addEventListener('click',()=>{$('#cfgKey').textContent=key();m.hidden=false});
+  function close(){m.hidden=true}
+  $('#cfgX').onclick=close;m.addEventListener('click',e=>{if(e.target===m)close()});
+  document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!m.hidden)close()});
+  m.addEventListener('click',e=>{
+    const c=e.target.closest('[data-copy]');if(c){navigator.clipboard&&navigator.clipboard.writeText($('#'+c.dataset.copy).textContent);toast('已复制');return}
+    const t=e.target.closest('.cfg-tool');if(!t)return;
+    if(t.dataset.imp==='1'){toast(`正在打开 ${t.dataset.tool}，接口地址和密钥已自动填入`)}
+    else{navigator.clipboard&&navigator.clipboard.writeText(`OPENAI_BASE_URL=${$('#cfgUrl').textContent}\nOPENAI_API_KEY=${$('#cfgKey').textContent}`);toast(`${t.dataset.tool} 配置已复制，粘贴到设置中即可`)}
+  });
+})();
+
+/* ---------- P7 抽奖 ---------- */
+(function(){
+  const P=[
+    {n:'1 亿 Token',t:'virtual',w:6},{n:'2,000 万 Token',t:'virtual',w:12},{n:'500 万 Token',t:'virtual',w:20},{n:'100 万 Token',t:'virtual',w:26},
+    {n:'模型 5 折券',t:'coupon',w:15},{n:'模型 8 折券',t:'coupon',w:16},{n:'标准版月卡',t:'coupon',w:9},{n:'京东卡 ¥100',t:'card',w:5},
+    {n:'品牌保温杯',t:'real',w:4},{n:'蓝牙耳机',t:'real',w:3},{n:'55 英寸电视',t:'real',w:1},{n:'旗舰手机',t:'real',w:.6},{n:'再来一次',t:'none',w:12}];
+  const COL={virtual:['#2E6BFF','#1F55D8'],coupon:['#6FEFFF','#3DCDEB'],card:['#FFBE5C','#F2A93B'],real:['#FF6B8A','#E84D70'],none:['#1C2E60','#162650']};
+  const INK={virtual:'#fff',coupon:'#04121F',card:'#2A1600',real:'#fff',none:'#8FA3D6'};
+  const cv=$('#wheel'),ctx=cv.getContext('2d'),SEG=360/P.length;let angle=0,spinning=false,spins=3;const log=[];
+  function draw(){const dpr=window.devicePixelRatio||1,size=340;cv.width=size*dpr;cv.height=size*dpr;ctx.setTransform(dpr,0,0,dpr,0,0);
+    const R=size/2-4,cx=size/2,cy=size/2;
+    P.forEach((p,i)=>{const a0=(i*SEG-90)*Math.PI/180,a1=((i+1)*SEG-90)*Math.PI/180;
+      ctx.beginPath();ctx.moveTo(cx,cy);ctx.arc(cx,cy,R,a0,a1);ctx.closePath();ctx.fillStyle=COL[p.t][i%2];ctx.fill();ctx.strokeStyle='rgba(10,18,48,.6)';ctx.lineWidth=1.5;ctx.stroke();
+      ctx.save();ctx.translate(cx,cy);ctx.rotate((i*SEG+SEG/2-90)*Math.PI/180);ctx.textAlign='right';ctx.textBaseline='middle';ctx.fillStyle=INK[p.t];ctx.font='600 12px PingFang SC, Microsoft YaHei, sans-serif';ctx.fillText(p.n,R-16,0);ctx.restore()});
+    ctx.beginPath();ctx.arc(cx,cy,R,0,Math.PI*2);ctx.strokeStyle='rgba(111,239,255,.8)';ctx.lineWidth=3;ctx.stroke();}
+  draw();
+  const total=P.reduce((a,p)=>a+p.w,0);
+  $('#prizeTable').innerHTML=P.map(p=>`<li><b><i style="background:${COL[p.t][0]}"></i>${p.n}</b><span>${(p.w/total*100).toFixed(1)}%</span></li>`).join('');
+  function num(){$('#spinNum').textContent=spins;$('#spinLeft').textContent=spins+' 次'}
+  function renderLog(){$('#winLog').innerHTML=log.length?log.map(x=>`<li><b>${x.n}</b><small>${x.time}</small></li>`).join(''):'<li class="empty">还没有中奖记录，转一次试试</li>'}
+  function pick(){let r=Math.random()*total;for(const p of P){if(r<p.w)return p;r-=p.w}return P[P.length-1]}
+  const modal=$('#modal');let again=null;
+  function showModal(p){$('#modalK').textContent=p.t==='none'?'差一点':'恭喜中奖';$('#modalT').textContent=p.n;
+    $('#modalD').textContent=p.t==='real'?'实物奖品将在活动结束后 15 个工作日内寄出':p.t==='none'?'已返还 1 次抽奖机会':p.t==='card'?'卡券已放入我的卡包':'已发放至账户';
+    $('#modalAgain').disabled=spins<=0;modal.hidden=false}
+  function close(){modal.hidden=true}
+  $('#modalOk').onclick=close;$('#modalX').onclick=close;modal.addEventListener('click',e=>{if(e.target===modal)close()});
+  $('#modalAgain').onclick=()=>{close();setTimeout(spin,200)};
+  function spin(cb){if(spinning)return;if(spins<=0){toast('抽奖次数不足，充值可获得更多机会');return}
+    spinning=true;spins--;num();const p=pick();if(p.t==='none')spins++;
+    const idx=P.indexOf(p);cv.style.transition='transform 4.2s cubic-bezier(.13,.72,.16,1)';angle+=360*6+(360-(idx*SEG+SEG/2))-(angle%360);cv.style.transform=`rotate(${angle}deg)`;
+    setTimeout(()=>{spinning=false;num();if(p.t!=='none'){log.unshift({n:p.n,time:new Date().toLocaleString('zh-CN',{hour12:false})});renderLog()}cb?cb(p):showModal(p)},4300)}
+  $('#btnSpin').onclick=()=>spin();$('#btnSpin2').onclick=()=>spin();
+  $('#btnSpinAll').onclick=()=>{if(spins<=0){toast('抽奖次数不足');return}const got=[];(function next(){if(spins<=0){$('#modalK').textContent='连抽结果';$('#modalT').textContent=got.join(' · ')||'再来一次';$('#modalD').textContent='虚拟奖品已发放至账户';$('#modalAgain').disabled=true;modal.hidden=false;return}spin(p=>{if(p.t!=='none')got.push(p.n);setTimeout(next,300)})})()};
+  num();renderLog();
+})();
+
+</script>
+<script>
+(function(){
+
+
+function url(k){return k+".mp4";}
+document.querySelectorAll("video[data-v]").forEach(v=>{v.src=url(v.dataset.v);v.muted=true;const p=v.play();if(p&&p.catch)p.catch(()=>{});});
+})();
+</script>
+</body>
+</html>
